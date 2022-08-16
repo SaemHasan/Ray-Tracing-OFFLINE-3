@@ -410,6 +410,65 @@ public:
 
 // General Class ends here =========================================
 
+// Floor class starts here =========================================
+
+class Floor : public Object{
+    public:
+    Floor():Object(){
+        
+    }
+
+    Floor(double floorWidth, double tileWidth){
+        reference_point = Point(floorWidth/2.0, floorWidth/2.0, 0);
+        length = tileWidth;
+    }
+
+    void draw(){
+        glPushMatrix();
+        glTranslatef(reference_point.x, reference_point.y, reference_point.z);
+        glColor3f(color.r, color.g, color.b);
+
+        for(int i = 0; i < reference_point.x*2; i += length){
+            for(int j = 0; j < reference_point.y*2; j += length){
+                // check later condition of if
+                if((i+j)%2 == 0){
+                    glColor3f(0.0, 0.0, 0.0);
+                }
+                else{
+                    glColor3f(1.0, 1.0, 1.0);
+                }
+                glBegin(GL_QUADS);
+                glVertex3f(i, j, 0);
+                glVertex3f(i+length, j, 0);
+                glVertex3f(i+length, j+length, 0);
+                glVertex3f(i, j+length, 0);
+                glEnd();
+            }
+        }
+        glPopMatrix();
+    }
+
+    friend istream& operator>>(istream &in, Floor &f){
+        in>>f.reference_point;
+        in>>f.length;
+        in>>f.color;
+        in>>f.coefficients[0]>>f.coefficients[1]>>f.coefficients[2]>>f.coefficients[3]>>f.shine;
+        return in;
+    }
+
+    friend ostream& operator<<(ostream &out, const Floor &f){
+        out<<"Floor:"<<endl;
+        out<<f.reference_point<<f.length<<endl;
+        out<<"Colors:"<<endl;
+        out<<f.color<<endl;
+        out<<"Coefficients:"<<endl;
+        out<<f.coefficients[0]<<" "<<f.coefficients[1]<<" "<<f.coefficients[2]<<" "<<f.coefficients[3]<<endl;
+        out<<"Shine:"<<endl;
+        out<<f.shine<<endl;
+        return out;
+    }
+};
+
 // Light class starts here =========================================
 // Point light class starts here =========================================
 class PointLight{
@@ -480,4 +539,5 @@ public:
         return in;
     }
 };
+
 
