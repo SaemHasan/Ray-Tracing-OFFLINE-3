@@ -280,21 +280,3 @@ class Floor : public Object{
 // Floor class ends here =========================================
 
 
-// Ray Class starts here =========================================
-class Ray{
-    public:
-        Point start;
-        Point direction;
-
-        Ray(){
-            start = Point();
-            direction = Point();
-        }
-        Ray(Point start, Point direction){
-            this->start = start;
-            this->direction = direction;
-            this->direction.normalize();
-        }
-
-};
-

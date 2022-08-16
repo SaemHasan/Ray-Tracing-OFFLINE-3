@@ -1,4 +1,4 @@
-#include "1705027_Object.h"
+#include "1705027_Ray.h"
 
 
 double cameraHeight;
