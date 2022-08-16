@@ -230,7 +230,7 @@ class Floor : public Object{
     }
 
     void draw(){
-        cout<<"Floor drawing"<<endl;
+        // cout<<"Floor drawing"<<endl;
         glPushMatrix();
 
         // glTranslatef(reference_point.x, reference_point.y, reference_point.z);
@@ -239,10 +239,12 @@ class Floor : public Object{
         for(int i = 0; i < reference_point.x*2; i += length){
             for(int j = 0; j < reference_point.y*2; j += length){
                 // check later condition of if
-                if((int)((i+j)/length)%2 == 0){
+                if((int)((i+j)/length)%2 == 0)
+                {
                     glColor3f(0.0, 0.0, 0.0);
                 }
-                else{
+                else
+                {
                     glColor3f(1.0, 1.0, 1.0);
                 }
                 glBegin(GL_QUADS);

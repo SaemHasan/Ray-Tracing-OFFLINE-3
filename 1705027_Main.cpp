@@ -41,7 +41,6 @@ void drawGrid()
 		glColor3f(0.6, 0.6, 0.6);	//grey
 		glBegin(GL_LINES);{
 			for(i=-8;i<=8;i++){
-
 				if(i==0)
 					continue;	//SKIP the MAIN axes
 
@@ -53,7 +52,8 @@ void drawGrid()
 				glVertex3f(-90, i*10, 0);
 				glVertex3f( 90, i*10, 0);
 			}
-		}glEnd();
+		}
+		glEnd();
 	}
 }
 
@@ -296,14 +296,13 @@ void display(){
 		objects[i]->draw();
 	}
 	
-
 	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
 	glutSwapBuffers();
 }
 
 
 void animate(){
-	angle+=0.05;
+	angle += 0.05;
 	//codes for any changes in Models, Camera
 	glutPostRedisplay();
 }
