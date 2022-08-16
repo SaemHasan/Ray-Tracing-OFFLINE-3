@@ -219,44 +219,50 @@ public:
 // Floor class starts here =========================================
 
 class Floor : public Object{
+    double floorWidth, tileWidth;
+    Color tileColors[2];
     public:
     Floor():Object(){
-        
+        floorWidth = 0;
+        tileWidth = 0;
+        tileColors[0] = Color(0, 0, 0);
+        tileColors[1] = Color(1, 1, 1);
     }
 
     Floor(double floorWidth, double tileWidth){
         reference_point = Point(-floorWidth/2.0, -floorWidth/2.0, 0);
         length = tileWidth;
+        this->floorWidth = floorWidth;
+        this->tileWidth = tileWidth;
+        tileColors[0] = Color(0, 0, 0);
+        tileColors[1] = Color(1, 1, 1);
     }
 
     void draw(){
         // cout<<"Floor drawing"<<endl;
         glPushMatrix();
-
-        // glTranslatef(reference_point.x, reference_point.y, reference_point.z);
-        // glColor3f(color.r, color.g, color.b);
-
-        for(int i = 0; i < reference_point.x*2; i += length){
-            for(int j = 0; j < reference_point.y*2; j += length){
-                // check later condition of if
-                if((int)((i+j)/length)%2 == 0)
-                {
-                    glColor3f(0.0, 0.0, 0.0);
+        glTranslatef(reference_point.x, reference_point.y, reference_point.z);
+        
+        for(int i=0; i<floorWidth/tileWidth; i++){
+            for(int j=0; j<floorWidth/tileWidth; j++){
+                if((i+j)%2 == 0){
+                    glColor3f(tileColors[0].r, tileColors[0].g, tileColors[0].b);
                 }
-                else
-                {
-                    glColor3f(1.0, 1.0, 1.0);
+                else{
+                    glColor3f(tileColors[1].r, tileColors[1].g, tileColors[1].b);
                 }
                 glBegin(GL_QUADS);
-                glVertex3f(i, j, 0);
-                glVertex3f(i+length, j, 0);
-                glVertex3f(i+length, j+length, 0);
-                glVertex3f(i, j+length, 0);
+                glVertex3f(i*tileWidth, j*tileWidth, 0);
+                glVertex3f(i*tileWidth, (j+1)*tileWidth, 0);
+                glVertex3f((i+1)*tileWidth, (j+1)*tileWidth, 0);
+                glVertex3f((i+1)*tileWidth, j*tileWidth, 0);
                 glEnd();
             }
         }
+
         glPopMatrix();
     }
+
 
     friend istream& operator>>(istream &in, Floor &f){
         in>>f.reference_point;
