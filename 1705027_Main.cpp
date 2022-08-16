@@ -184,7 +184,7 @@ void loadData(){
 	for(int i=0;i<numberOfObjects;i++){
 		string objectType;
 		inputFile >> objectType;
-		cout<< "Object Type: " << objectType << endl;
+		// cout<< "Object Type: " << objectType << endl;
 		if(objectType == "sphere"){
 			Sphere *s = new Sphere();
 			inputFile >> (*s);
@@ -209,7 +209,7 @@ void loadData(){
 	}
 	
 	inputFile >> numberOfPointLights;
-	cout<<"number of point lights :"<<numberOfPointLights<<endl;
+	// cout<<"number of point lights :"<<numberOfPointLights<<endl;
 	for(int i=0;i<numberOfPointLights;i++){
 		PointLight *pl = new PointLight();
 		inputFile >> *pl;
