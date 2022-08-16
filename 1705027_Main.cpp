@@ -10,8 +10,8 @@ Point pos, u, r, l;
 
 //vectors
 
-vector<Object> objects;
-vector<PointLight> lights;
+vector<Object*> objects;
+vector<PointLight*> lights;
 
 
 void drawAxes()
@@ -186,20 +186,20 @@ void loadData(){
 		inputFile >> objectType;
 		cout<< "Object Type: " << objectType << endl;
 		if(objectType == "sphere"){
-			Sphere s;
-			inputFile >> s;
+			Sphere *s = new Sphere();
+			inputFile >> (*s);
 			// cout<<s;
 			objects.push_back(s);
 		}
 		else if(objectType == "triangle"){
-			Triangle t;
-			inputFile >> t;
+			Triangle *t = new Triangle();
+			inputFile >> *t;
 			// cout<<t;
 			objects.push_back(t);
 		}
 		else if(objectType == "general"){
-			General g;
-			inputFile >> g;
+			General *g = new General();
+			inputFile >> *g;
 			// cout<<g;
 			objects.push_back(g);
 		}
@@ -211,19 +211,26 @@ void loadData(){
 	inputFile >> numberOfPointLights;
 	cout<<"number of point lights :"<<numberOfPointLights<<endl;
 	for(int i=0;i<numberOfPointLights;i++){
-		PointLight pl;
-		inputFile >> pl;
+		PointLight *pl = new PointLight();
+		inputFile >> *pl;
 		// cout<<pl;
 		lights.push_back(pl);
 	}
 
 	inputFile >> numberOfSpotLights;
 	for(int i=0;i<numberOfSpotLights;i++){
-		SpotLight sl;
-		inputFile >> sl;
+		SpotLight *sl = new SpotLight();
+		inputFile >> *sl;
 		// cout<<sl;
 		lights.push_back(sl);
 	}
+
+	// initialize floor
+	Object *floor = new Floor(1000, 20);
+	floor->setColor(Color(1,1,1));
+	floor->setShine(10);
+	floor->setCoEfficients(0.4, 0.2, 0.2, 0.2);
+	objects.push_back(floor);
 }
 
 void showData(){
@@ -231,7 +238,7 @@ void showData(){
 	cout << "Pixels along both axis: " << pixelsAlongBothAxis << endl;
 	cout << "Number of Objects: " << numberOfObjects << endl;
 
-	for(int i=0;i<numberOfObjects;i++){
+	for(int i=0;i<objects.size();i++){
 		cout << "Object " << i+1 << ": " << endl;
 		cout << objects[i] << endl;
 	}
@@ -283,6 +290,12 @@ void display(){
 
 	drawAxes();
 	drawGrid();
+
+	// draw objects
+	for(int i=0;i<objects.size();i++){
+		objects[i]->draw();
+	}
+	
 
 	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
 	glutSwapBuffers();

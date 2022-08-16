@@ -225,7 +225,9 @@ public:
         shine = 0;
     }
 
-    virtual void draw(){}
+    virtual void draw(){
+
+    }
     void setColor(Color c){
         color = c;
     }
@@ -280,6 +282,7 @@ public:
     }
 
     void draw(){
+        // cout<<"Triangle drawing"<<endl;
         glBegin(GL_TRIANGLES);
         glColor3f(color.r, color.g, color.b);
         glVertex3f(points[0].x, points[0].y, points[0].z);
@@ -308,7 +311,7 @@ public:
     } 
 };
 
-// Triangel class ends here =========================================
+// Triangle class ends here =========================================
 
 // Sphere class starts here =========================================
 class Sphere : public Object{
@@ -322,6 +325,7 @@ public:
     }
 
     void draw(){
+        // cout<<"Sphere drawing"<<endl;
         glPushMatrix();
         glTranslatef(reference_point.x, reference_point.y, reference_point.z);
         glColor3f(color.r, color.g, color.b);
@@ -385,6 +389,8 @@ public:
         J = 0;
     }
 
+    void draw(){}
+
     friend istream& operator>>(istream &in, General &g){
         in>>g.A>>g.B>>g.C>>g.D>>g.E>>g.F>>g.G>>g.H>>g.I>>g.J;
         in>> g.reference_point;
@@ -419,11 +425,12 @@ class Floor : public Object{
     }
 
     Floor(double floorWidth, double tileWidth){
-        reference_point = Point(floorWidth/2.0, floorWidth/2.0, 0);
+        reference_point = Point(-floorWidth/2.0, -floorWidth/2.0, 0);
         length = tileWidth;
     }
 
     void draw(){
+        // cout<<"Floor drawing"<<endl;
         glPushMatrix();
         glTranslatef(reference_point.x, reference_point.y, reference_point.z);
         glColor3f(color.r, color.g, color.b);
@@ -468,6 +475,8 @@ class Floor : public Object{
         return out;
     }
 };
+
+// Floor class ends here =========================================
 
 // Light class starts here =========================================
 // Point light class starts here =========================================
@@ -540,4 +549,23 @@ public:
     }
 };
 
+// spot light class ends here =========================================
+
+// Ray Class starts here =========================================
+class Ray{
+    public:
+        Point start;
+        Point direction;
+
+        Ray(){
+            start = Point();
+            direction = Point();
+        }
+        Ray(Point start, Point direction){
+            this->start = start;
+            this->direction = direction;
+            this->direction.normalize();
+        }
+
+};
 
