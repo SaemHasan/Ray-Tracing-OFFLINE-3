@@ -1,4 +1,4 @@
-#include "1705027_Light.h"
+#include "1705027_Ray.h"
 
 double cameraHeight;
 double cameraAngle;
@@ -106,7 +106,48 @@ public:
     }
 
     double intersect(Ray ray, Color &color, int level){
-        return -2.0;
+        double determinantA, determinantBeta, determinantGamma, determinantT;
+        double beta, gamma, t;
+
+        Point a,b,c;
+        a = points[0];
+        b = points[1];
+        c = points[2];
+
+        determinantA = (a.x-b.x) * ( (a.y-c.y)*ray.rd.z - (a.z-c.z)*ray.rd.y);
+        determinantA += (a.y-b.y) * ( (a.z-c.z)*ray.rd.x - (a.x-c.x)*ray.rd.z);
+        determinantA += (a.z-b.z) * ( (a.x-c.x)*ray.rd.y - (a.y-c.y)*ray.rd.x);
+
+        determinantBeta = (a.x-ray.r0.x) * ( (a.y-c.y)*ray.rd.z - (a.z-c.z)*ray.rd.y);
+        determinantBeta += (a.y-ray.r0.y) * ( (a.z-c.z)*ray.rd.x - (a.x-c.x)*ray.rd.z);
+        determinantBeta += (a.z-ray.r0.z) * ( (a.x-c.x)*ray.rd.y - (a.y-c.y)*ray.rd.x);
+
+        determinantGamma = (a.x-b.x) * ( (a.y-ray.r0.y)*ray.rd.z - (a.z-ray.r0.z)*ray.rd.y);
+        determinantGamma += (a.y-b.y) * ( (a.z-ray.r0.z)*ray.rd.x - (a.x-ray.r0.x)*ray.rd.z);
+        determinantGamma += (a.z-b.z) * ( (a.x-ray.r0.x)*ray.rd.y - (a.y-ray.r0.y)*ray.rd.x);
+
+        determinantT = (a.x-b.x) * ( (a.y-c.y)*(a.z-ray.r0.z) - (a.z-c.z)*(a.y-ray.r0.y));
+        determinantT += (a.y-b.y) * ( (a.z-c.z)*(a.x-ray.r0.x) - (a.x-c.x)*(a.z-ray.r0.z));
+        determinantT += (a.z-b.z) * ( (a.x-c.x)*(a.y-ray.r0.y) - (a.y-c.y)*(a.x-ray.r0.x));
+
+        if(determinantA == 0.0){
+            t = INF;
+        }
+        else{
+            beta = determinantBeta/determinantA;
+            gamma = determinantGamma/determinantA;            
+            if(beta < 0 || gamma < 0 || beta+gamma > 1){
+                t = INF;
+            }
+            else{
+                t = determinantT/determinantA;
+            }
+        }
+
+        if(level == 0){
+            return t;
+        }
+        return t;//delete later
     }
 
     friend ostream& operator<<(ostream &out, const Triangle &t){
@@ -133,6 +174,8 @@ public:
 
 // Sphere class starts here =========================================
 class Sphere : public Object{
+    Point center;
+    double radius;
 public:
     Sphere():Object(){
         
@@ -140,6 +183,8 @@ public:
     Sphere(Point center, double radius){
         reference_point = center;
         length = radius;
+        this->center = center;
+        this->radius = radius;
     }
 
     void drawSphere(double radius,int slices,int stacks)
@@ -190,7 +235,34 @@ public:
     }
 
     double intersect(Ray ray, Color &color, int level){
-        return -3.0;
+        double a, b, c;
+
+        double t_pos, t_neg;
+
+        a = ray.rd.dot(ray.rd);
+        b = 2 * (ray.rd.dot(ray.r0 - center));
+        c = (ray.r0- center).dot(ray.r0 - center) - (radius * radius);
+
+        double d_sq = (b*b - 4*a*c); // b^2 - 4ac
+
+        cout<<"d_sq: "<<d_sq<<endl;
+
+        if(d_sq<0.0){
+            t_neg = INF;
+        }
+        else if(d_sq>0.0){
+            t_pos = (-b+sqrt(d_sq))/(2.0*a);
+            t_neg = (-b-sqrt(d_sq))/(2.0*a);
+        }
+        else{
+            t_neg = - b / (2.0*a);
+        }
+
+        if (level == 0)
+        {
+            return t_neg;
+        }
+        return t_neg;//delete it later
     }
 
     friend istream& operator>>(istream &in, Sphere &s){

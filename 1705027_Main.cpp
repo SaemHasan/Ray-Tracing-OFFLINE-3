@@ -1,8 +1,14 @@
-#include "1705027_Ray.h"
+#include "1705027_Object.h"
+#include "bitmap_image.hpp"
 
 //vectors
 vector<Object*> objects;
 vector<PointLight*> lights;
+
+//window 
+int windowWidth = 500;
+int windowHeight = 500;
+double fovY = 80.0;
 
 void drawAxes()
 {
@@ -58,11 +64,64 @@ void drawSquare(double a)
 	}glEnd();
 }
 
+void capture(){
+	// initialize bitmap image
+	cout <<"capturing\n";
+	bitmap_image image(pixelsAlongBothAxis,pixelsAlongBothAxis);
+	
+	for(int i=0;i<pixelsAlongBothAxis;i++){
+		for(int j=0;j<pixelsAlongBothAxis;j++){
+			image.set_pixel(i,j, 0, 0, 0);
+		}
+	}
+
+	// plane distance
+	double planeDistance = (windowHeight/2.0) / tan(deg2rad(fovY)/2.0);
+
+	// top left
+	Point topLeft = pos + l * planeDistance - r * (windowWidth/2.0) + u * (windowHeight/2.0);
+
+	// du, dv
+	double du = windowWidth / (pixelsAlongBothAxis * 1.0);
+	double dv = windowHeight / (pixelsAlongBothAxis * 1.0);
+
+	// choose middle of the grid cell
+	topLeft = topLeft + r * (du*0.5) - u * (dv*0.5);
+
+	int nearest = -1;
+	double t, tMin = INF;
+
+	for (int i=0;i<pixelsAlongBothAxis;i++){
+		for(int j=0;j<pixelsAlongBothAxis;j++){
+			Point curPixel = topLeft + r * (i*du) - u * (j*dv);
+			Ray ray(pos, curPixel - pos);
+			Color color = Color(0,0,0);
+			for(int k=0;k<objects.size();k++){
+				t = objects[k]->intersect(ray, color, 0);
+				if(t<tMin){
+					tMin = t;
+					nearest = k;
+				}
+			}
+			if(nearest != -1){
+				Color color = objects[nearest]->color;
+				image.set_pixel(i,j, (int)color.r * 255.0, (int) color.g * 255.0, (int) color.b * 255.0);
+			}
+		}
+	}
+
+	image.save_image("test_output.bmp");
+
+
+}
 
 
 
 void keyboardListener(unsigned char key, int x,int y){
 	switch(key){
+		case '0':
+			capture();
+			break;
 
 		case '1':
 			//drawgrid=1-drawgrid;
@@ -325,7 +384,7 @@ void init(){
 	glLoadIdentity();
 
 	//give PERSPECTIVE parameters
-	gluPerspective(80,	1,	1,	1000.0);
+	gluPerspective(fovY,	1,	1,	1000.0);
 	//field of view in the Y (vertically)
 	//aspect ratio that determines the field of view in the X direction (horizontally)
 	//near distance
@@ -335,7 +394,7 @@ void init(){
 int main(int argc, char **argv){
 	srand(time(NULL));
 	glutInit(&argc,argv);
-	glutInitWindowSize(500, 500);
+	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(0, 0);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB);	//Depth, Double buffer, RGB color
 

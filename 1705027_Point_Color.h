@@ -175,9 +175,9 @@ class Color{
             this->b = b;
         }
         Color(){
-            r = rand()%256;
-            g = rand()%256;
-            b = rand()%256;
+            r = (rand()%256)/255.0;
+            g = (rand()%256)/255.0;
+            b = (rand()%256)/255.0;
         }
 
         Color operator=(const Color &c){
