@@ -315,10 +315,12 @@ void init(){
 	cameraAngle=1.0;
 	angle=0;
 
-	pos = Point(0,0,-190);
-	u = Point(0,1,0);
-	r = Point(1,0,0);
-	l = Point(0,0,1);
+	double root2 = 1.0/sqrt(2);
+
+	pos = Point(100,100,50);
+	u = Point(0,0,1);
+	r = Point(-root2,root2,0);
+	l = Point(-root2,-root2,0);
 
 	//clear the screen
 	glClearColor(0,0,0,0);

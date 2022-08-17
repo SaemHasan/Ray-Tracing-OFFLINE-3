@@ -83,11 +83,12 @@ public:
 
     void draw(){
         // cout<<"Triangle drawing"<<endl;
-        glBegin(GL_TRIANGLES);
         glColor3f(color.r, color.g, color.b);
+        glBegin(GL_TRIANGLES);{
         glVertex3f(points[0].x, points[0].y, points[0].z);
         glVertex3f(points[1].x, points[1].y, points[1].z);
         glVertex3f(points[2].x, points[2].y, points[2].z);
+        }
         glEnd();
     }
 
@@ -129,7 +130,7 @@ public:
         glPushMatrix();
         glTranslatef(reference_point.x, reference_point.y, reference_point.z);
         glColor3f(color.r, color.g, color.b);
-        glutSolidSphere(length, 20, 20); // check later
+        glutSolidSphere(length, 70, 70); // check later
         glPopMatrix();
     }
 
@@ -241,8 +242,7 @@ class Floor : public Object{
     void draw(){
         // cout<<"Floor drawing"<<endl;
         glPushMatrix();
-        glTranslatef(reference_point.x, reference_point.y, reference_point.z);
-        
+        glTranslatef(reference_point.x, reference_point.y, reference_point.z); 
         for(int i=0; i<floorWidth/tileWidth; i++){
             for(int j=0; j<floorWidth/tileWidth; j++){
                 if((i+j)%2 == 0){
@@ -251,11 +251,12 @@ class Floor : public Object{
                 else{
                     glColor3f(tileColors[1].r, tileColors[1].g, tileColors[1].b);
                 }
-                glBegin(GL_QUADS);
-                glVertex3f(i*tileWidth, j*tileWidth, 0);
-                glVertex3f(i*tileWidth, (j+1)*tileWidth, 0);
-                glVertex3f((i+1)*tileWidth, (j+1)*tileWidth, 0);
-                glVertex3f((i+1)*tileWidth, j*tileWidth, 0);
+                glBegin(GL_QUADS);{
+                    glVertex3f(i*tileWidth, j*tileWidth, 0);
+                    glVertex3f(i*tileWidth, (j+1)*tileWidth, 0);
+                    glVertex3f((i+1)*tileWidth, (j+1)*tileWidth, 0);
+                    glVertex3f((i+1)*tileWidth, j*tileWidth, 0);
+                }
                 glEnd();
             }
         }
