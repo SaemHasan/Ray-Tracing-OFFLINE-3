@@ -25,6 +25,7 @@ double deg2rad(double deg){
     return deg * M_PI / 180.0;
 }
 
+
 // variables
 int levelsOfRecursion = 0;
 int pixelsAlongBothAxis = 0;

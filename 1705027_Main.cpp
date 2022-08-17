@@ -1,18 +1,8 @@
 #include "1705027_Ray.h"
 
-
-double cameraHeight;
-double cameraAngle;
-int drawgrid;
-int drawaxes;
-double angle;
-Point pos, u, r, l;
-
 //vectors
-
 vector<Object*> objects;
 vector<PointLight*> lights;
-
 
 void drawAxes()
 {
@@ -310,7 +300,7 @@ void animate(){
 void init(){
 	//codes for initialization
 	drawgrid=0;
-	drawaxes=1;
+	drawaxes=0;
 	cameraHeight=150.0;
 	cameraAngle=1.0;
 	angle=0;

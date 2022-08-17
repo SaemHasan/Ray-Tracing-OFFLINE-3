@@ -1,5 +1,13 @@
 #include "1705027_Light.h"
 
+double cameraHeight;
+double cameraAngle;
+int drawgrid;
+int drawaxes;
+double angle;
+Point pos, u, r, l;
+
+
 // Object class starts here =======================================
 
 class Object{
@@ -27,6 +35,11 @@ public:
     virtual void draw(){
 
     }
+
+    virtual double intersect(Ray ray, Color &color, int level){
+        return -1.0;
+    }
+
     void setColor(Color c){
         color = c;
     }
@@ -92,6 +105,10 @@ public:
         glEnd();
     }
 
+    double intersect(Ray ray, Color &color, int level){
+        return -2.0;
+    }
+
     friend ostream& operator<<(ostream &out, const Triangle &t){
         out<<"Triangle:"<<endl;
         out<<t.points[0]<<t.points[1]<<t.points[2]<<endl;
@@ -125,13 +142,55 @@ public:
         length = radius;
     }
 
+    void drawSphere(double radius,int slices,int stacks)
+    {
+        Point points[100][100];
+        int i,j;
+        double h,r;
+        //generate points
+        for(i=0;i<=stacks;i++)
+        {
+            h=radius*sin(((double)i/(double)stacks)*(pi/2));
+            r=radius*cos(((double)i/(double)stacks)*(pi/2));
+            for(j=0;j<=slices;j++)
+            {
+                points[i][j].x=r*cos(((double)j/(double)slices)*2*pi);
+                points[i][j].y=r*sin(((double)j/(double)slices)*2*pi);
+                points[i][j].z=h;
+            }
+        }
+        //draw quads using generated points
+        for(i=0;i<stacks;i++)
+        {
+            for(j=0;j<slices;j++)
+            {
+                glBegin(GL_QUADS);{
+                    //upper hemisphere
+                    glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
+                    glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
+                    glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
+                    glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
+                    //lower hemisphere
+                    glVertex3f(points[i][j].x,points[i][j].y,-points[i][j].z);
+                    glVertex3f(points[i][j+1].x,points[i][j+1].y,-points[i][j+1].z);
+                    glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,-points[i+1][j+1].z);
+                    glVertex3f(points[i+1][j].x,points[i+1][j].y,-points[i+1][j].z);
+                }glEnd();
+            }
+        }
+    }
+
     void draw(){
         // cout<<"Sphere drawing"<<endl;
         glPushMatrix();
         glTranslatef(reference_point.x, reference_point.y, reference_point.z);
         glColor3f(color.r, color.g, color.b);
-        glutSolidSphere(length, 70, 70); // check later
+        drawSphere(length, 70, 70);
         glPopMatrix();
+    }
+
+    double intersect(Ray ray, Color &color, int level){
+        return -3.0;
     }
 
     friend istream& operator>>(istream &in, Sphere &s){
@@ -191,6 +250,10 @@ public:
     }
 
     void draw(){}
+
+    double intersect(Ray ray, Color &color, int level){
+        return -4.0;
+    }
 
     friend istream& operator>>(istream &in, General &g){
         in>>g.A>>g.B>>g.C>>g.D>>g.E>>g.F>>g.G>>g.H>>g.I>>g.J;
@@ -262,6 +325,10 @@ class Floor : public Object{
         }
 
         glPopMatrix();
+    }
+
+    double intersect(Ray ray, Color &color, int level){
+        return -5.0;
     }
 
 
