@@ -7,7 +7,7 @@ int drawaxes;
 double angle;
 Point pos, u, r, l;
 
-bool verbose = true;
+bool verbose = false;
 
 // Object class starts here =======================================
 
@@ -175,8 +175,7 @@ public:
 
 // Sphere class starts here =========================================
 class Sphere : public Object{
-    Point center;
-    double radius;
+    
 public:
     Sphere():Object(){
         
@@ -184,8 +183,6 @@ public:
     Sphere(Point center, double radius){
         reference_point = center;
         length = radius;
-        this->center = center;
-        this->radius = radius;
     }
 
     void drawSphere(double radius,int slices,int stacks)
@@ -253,8 +250,6 @@ public:
 
         
         if(verbose){
-            cout<<"center = "<<center<<endl;
-            cout<<"radius = "<<radius<<endl;
             cout<<"dir : "<<dir;
             cout<<"origin: ";  
             cout << origin;
@@ -267,7 +262,7 @@ public:
             t_neg = INF;
         }
         else if(d_sq>0.0){
-            cout<<"d_sq: "<<d_sq<<endl;
+            // cout<<"d_sq: "<<d_sq<<endl;
             t_pos = (-b+sqrt(d_sq))/(2.0*a);
             t_neg = (-b-sqrt(d_sq))/(2.0*a);
             if(t_neg<0.0){

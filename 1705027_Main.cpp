@@ -98,18 +98,17 @@ void capture(){
 			Color color = Color(0,0,0);
 			int nearest = -1;
 			double t, tMin = INF;
-			// check here for floor. have to remove -1  in for loop
-			// for(int k=0;k<objects.size();k++){
-				t = objects[0]->intersect(ray, color, 0);
+			for(int k=0;k<objects.size();k++){
+				t = objects[k]->intersect(ray, color, 0);
 				if(t>0.0 && t<tMin){
 					tMin = t;
-					nearest = 0;
+					nearest = k;
 				}
-			// }
+			}
 			if(nearest != -1){
 				// cout<<"nearest : "<<nearest<<endl;
 				Color color = objects[nearest]->color;
-				cout<<color;
+				// cout<<color;
 				image.set_pixel(i,j, (int) color.r * 255.0, (int) color.g * 255.0, (int) color.b * 255.0);
 			}
 		}
