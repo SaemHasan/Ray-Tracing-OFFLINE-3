@@ -66,7 +66,7 @@ public:
 };
 
 // Object class ends here =========================================
-
+// Triangle class starts here =====================================
 class Triangle : public Object
 {
 

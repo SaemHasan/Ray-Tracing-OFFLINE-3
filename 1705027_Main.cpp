@@ -9,6 +9,7 @@ vector<PointLight*> lights;
 int windowWidth = 500;
 int windowHeight = 500;
 double fovY = 80.0;
+double moveAmount = 5.0;
 
 void drawAxes()
 {
@@ -87,7 +88,7 @@ void capture(){
 
 	// choose middle of the grid cell
 	topLeft = topLeft + r * (du*0.5) - u * (dv*0.5);
-	cout << "topLeft : "<<topLeft<<endl;
+	// cout << "topLeft : "<<topLeft<<endl;
 
 	for (int i=0;i<pixelsAlongBothAxis;i++){
 
@@ -129,33 +130,33 @@ void keyboardListener(unsigned char key, int x,int y){
 
 		case '1':
 			//drawgrid=1-drawgrid;
-			r = Point::rotateVector(r, u, deg2rad(3.0));
-			l = Point::rotateVector(l, u, deg2rad(3.0));
+			r = Point::rotateVector(r, u, deg2rad(moveAmount));
+			l = Point::rotateVector(l, u, deg2rad(moveAmount));
 			
 			break;
 		case '2':
-			r = Point::rotateVector(r, u, deg2rad(-3.0));
-			l = Point::rotateVector(l, u, deg2rad(-3.0));
+			r = Point::rotateVector(r, u, deg2rad(-moveAmount));
+			l = Point::rotateVector(l, u, deg2rad(-moveAmount));
 			
 			break;
 		case '3':
-			l = Point::rotateVector(l, r, deg2rad(-3.0));
-			u = Point::rotateVector(u, r, deg2rad(-3.0));
+			l = Point::rotateVector(l, r, deg2rad(-moveAmount));
+			u = Point::rotateVector(u, r, deg2rad(-moveAmount));
 			 
 			break;
 		case '4':
-			l = Point::rotateVector(l, r, deg2rad(3.0));
-			u = Point::rotateVector(u, r, deg2rad(3.0));
+			l = Point::rotateVector(l, r, deg2rad(moveAmount));
+			u = Point::rotateVector(u, r, deg2rad(moveAmount));
 			 
 			break;
 		case '5':
-			r = Point::rotateVector(r, l, deg2rad(3.0));
-			u = Point::rotateVector(u, l, deg2rad(3.0));
+			r = Point::rotateVector(r, l, deg2rad(moveAmount));
+			u = Point::rotateVector(u, l, deg2rad(moveAmount));
 			
 			break;
 		case '6':
-			r = Point::rotateVector(r, l, deg2rad(-3.0));
-			u = Point::rotateVector(u, l, deg2rad(-3.0));
+			r = Point::rotateVector(r, l, deg2rad(-moveAmount));
+			u = Point::rotateVector(u, l, deg2rad(-moveAmount));
 			
 			break;
 		default:
@@ -168,27 +169,27 @@ void specialKeyListener(int key, int x,int y){
 	switch(key){
 		case GLUT_KEY_DOWN:		//down arrow key
 			cameraHeight -= 3.0;
-			pos = pos - (l * 3.0);
+			pos = pos - (l * moveAmount);
 			break;
 		case GLUT_KEY_UP:		// up arrow key
 			cameraHeight += 3.0;
-			pos = pos + (l * 3.0);
+			pos = pos + (l * moveAmount);
 			break;
 
 		case GLUT_KEY_RIGHT:
 			cameraAngle += 0.03;
-			pos = pos - (r * 3.0);
+			pos = pos - (r * moveAmount);
 			break;
 		case GLUT_KEY_LEFT:
 			cameraAngle -= 0.03;
-			pos = pos + (r * 3.0);
+			pos = pos + (r * moveAmount);
 			break;
 
 		case GLUT_KEY_PAGE_UP:
-			pos = pos + (u * 3.0);
+			pos = pos + (u * moveAmount);
 			break;
 		case GLUT_KEY_PAGE_DOWN:
-			pos = pos - (u * 3.0);
+			pos = pos - (u * moveAmount);
 			break;
 
 		case GLUT_KEY_INSERT:
