@@ -77,42 +77,47 @@ void capture(){
 
 	// plane distance
 	double planeDistance = (windowHeight/2.0) / tan(deg2rad(fovY)/2.0);
-
+	// cout << "planeDistance : "<<planeDistance<<endl;
 	// top left
 	Point topLeft = pos + l * planeDistance - r * (windowWidth/2.0) + u * (windowHeight/2.0);
-
+	// cout << "topLeft : "<<topLeft<<endl;
 	// du, dv
 	double du = windowWidth / (pixelsAlongBothAxis * 1.0);
 	double dv = windowHeight / (pixelsAlongBothAxis * 1.0);
 
 	// choose middle of the grid cell
 	topLeft = topLeft + r * (du*0.5) - u * (dv*0.5);
-
-	int nearest = -1;
-	double t, tMin = INF;
+	cout << "topLeft : "<<topLeft<<endl;
 
 	for (int i=0;i<pixelsAlongBothAxis;i++){
+
 		for(int j=0;j<pixelsAlongBothAxis;j++){
+
 			Point curPixel = topLeft + r * (i*du) - u * (j*dv);
 			Ray ray(pos, curPixel - pos);
 			Color color = Color(0,0,0);
-			for(int k=0;k<objects.size();k++){
-				t = objects[k]->intersect(ray, color, 0);
-				if(t<tMin){
+			int nearest = -1;
+			double t, tMin = INF;
+			// check here for floor. have to remove -1  in for loop
+			// for(int k=0;k<objects.size();k++){
+				t = objects[0]->intersect(ray, color, 0);
+				if(t>0.0 && t<tMin){
 					tMin = t;
-					nearest = k;
+					nearest = 0;
 				}
-			}
+			// }
 			if(nearest != -1){
+				// cout<<"nearest : "<<nearest<<endl;
 				Color color = objects[nearest]->color;
-				image.set_pixel(i,j, (int)color.r * 255.0, (int) color.g * 255.0, (int) color.b * 255.0);
+				cout<<color;
+				image.set_pixel(i,j, (int) color.r * 255.0, (int) color.g * 255.0, (int) color.b * 255.0);
 			}
 		}
 	}
 
 	image.save_image("test_output.bmp");
 
-
+	cout<<"saving img\n";
 }
 
 
@@ -289,19 +294,19 @@ void showData(){
 
 	for(int i=0;i<objects.size();i++){
 		cout << "Object " << i+1 << ": " << endl;
-		cout << objects[i] << endl;
+		cout << *objects[i] << endl;
 	}
 
 	cout << "Number of Point Lights: " << numberOfPointLights << endl;
 	for(int i=0;i<numberOfPointLights;i++){
 		cout << "Point Light " << i+1 << ": " << endl;
-		cout << lights[i] << endl;
+		cout << *lights[i] << endl;
 	}
 
 	cout << "Number of Spot Lights: " << numberOfSpotLights << endl;
 	for(int i=numberOfPointLights;i<numberOfPointLights+numberOfSpotLights;i++){
 		cout << "Spot Light " << i+1 << ": " << endl;
-		cout << lights[i] << endl;
+		cout << *lights[i] << endl;
 	}
 }
 

@@ -11,8 +11,7 @@ class Ray{
         }
         Ray(Point start, Point direction){
             this->r0 = start;
-            this->rd = direction;
-            this->rd.normalize();
+            this->rd = direction.normalize();
         }
 
 };

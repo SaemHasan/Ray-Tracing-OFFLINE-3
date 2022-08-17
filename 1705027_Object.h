@@ -7,6 +7,7 @@ int drawaxes;
 double angle;
 Point pos, u, r, l;
 
+bool verbose = true;
 
 // Object class starts here =======================================
 
@@ -239,20 +240,39 @@ public:
 
         double t_pos, t_neg;
 
-        a = ray.rd.dot(ray.rd);
-        b = 2 * (ray.rd.dot(ray.r0 - center));
-        c = (ray.r0- center).dot(ray.r0 - center) - (radius * radius);
+        Point dir = ray.rd;
+        Point origin = ray.r0 - reference_point;
+        
+        a = dir.dot(dir);
+        b = origin.dot(dir) * 2.0;
+        c = origin.dot(origin) - length*length;
 
+
+        
         double d_sq = (b*b - 4*a*c); // b^2 - 4ac
 
-        cout<<"d_sq: "<<d_sq<<endl;
+        
+        if(verbose){
+            cout<<"center = "<<center<<endl;
+            cout<<"radius = "<<radius<<endl;
+            cout<<"dir : "<<dir;
+            cout<<"origin: ";  
+            cout << origin;
+            cout<<"a: "<<a<<" b: "<<b<<" c: "<<c<<endl;
+            cout<<"d_sq: "<<d_sq<<endl;
+            verbose = false;
+        }
 
         if(d_sq<0.0){
             t_neg = INF;
         }
         else if(d_sq>0.0){
+            cout<<"d_sq: "<<d_sq<<endl;
             t_pos = (-b+sqrt(d_sq))/(2.0*a);
             t_neg = (-b-sqrt(d_sq))/(2.0*a);
+            if(t_neg<0.0){
+                t_neg = t_pos;
+            }
         }
         else{
             t_neg = - b / (2.0*a);
@@ -324,7 +344,7 @@ public:
     void draw(){}
 
     double intersect(Ray ray, Color &color, int level){
-        return -4.0;
+        return -1.0;
     }
 
     friend istream& operator>>(istream &in, General &g){
@@ -400,7 +420,7 @@ class Floor : public Object{
     }
 
     double intersect(Ray ray, Color &color, int level){
-        return -5.0;
+        return INF;
     }
 
 
