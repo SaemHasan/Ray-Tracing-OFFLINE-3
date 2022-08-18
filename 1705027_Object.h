@@ -160,7 +160,7 @@ public:
         if(level == 0){
             return t;
         }
-        return t;//delete later
+        return INF;//delete later
     }
 
     friend ostream& operator<<(ostream &out, const Triangle &t){
@@ -244,24 +244,27 @@ public:
         glPopMatrix();
     }
 
-    double intersect(Ray ray, Color& color, int level){
+    double intersect(Ray ray, Color& color, int level)
+    {
         // for tmin
         double a, b, c;
         double t_pos, t_neg;
 
         Point dir = ray.rd;
+        // dir.normalize();
         Point origin = ray.r0 - reference_point;
         
         a = dir.dot(dir);
         b = origin.dot(dir) * 2.0;
         c = origin.dot(origin) - length*length;
         
-        double d_sq = (b*b - 4*a*c); // b^2 - 4ac
+        double d_sq = (b*b - 4.0*a*c); // b^2 - 4ac
 
         if(d_sq<0.0){
             t_neg = INF;
         }
-        else if(d_sq>0.0){
+        else{
+        if(d_sq>0.0){
             // cout<<"d_sq: "<<d_sq<<endl;
             t_pos = (-b+sqrt(d_sq))/(2.0*a);
             t_neg = (-b-sqrt(d_sq))/(2.0*a);
@@ -271,6 +274,7 @@ public:
         }
         else{
             t_neg = - b / (2.0*a);
+        }
         }
 
         if (level == 0)
@@ -306,42 +310,87 @@ public:
 
             double light_distance = lights[i]->position.distance(intersect_point);
             Ray light_ray(lights[i]->position, light_dir);
-            bool shadow = false;
             
+            bool shadow = false;
+            double eps = 0.000001;
+
+            double t_min = INF,t;
             for(int j=0; j<objects.size(); j++){
-                double t = objects[j]->intersect(light_ray, color, 0);
-                if(t>0.0 && t<light_distance){
-                    shadow = true;
-                    break;
+                Color dummyColor;
+                t = objects[j]->intersect(light_ray, dummyColor, 0);
+                if(t>0.0 && t_min>t){
+                    t_min = t;
                 }
+            }
+
+            // Point shadowPoint = light_ray.r0 + light_ray.rd * t_min;
+            // double shadowPointDistance = shadowPoint.distance(light_ray.r0);
+            // if(shadowPointDistance < light_distance-eps){
+            //     shadow = true;
+            // }
+            if(t_min < light_distance-eps){
+                // cout<<"shadow\n";
+                shadow = true;
             }
 
             if(!shadow){
                 // cout<<"no shadow"<<endl;
-                double diffuse = normal.dot(-light_ray.rd);
+                double diffuse = normal.dot(-light_ray.rd) * 1.0;
 
                 if(diffuse>0.0){
                     color = color + intersectionPointColor * lights[i]->color * coefficients[DIFFUSE] * diffuse;
                 }
-                Point reflection = normal * 2.0 * light_ray.rd.dot(normal) - light_ray.rd;
-                double specular = reflection.dot(ray.rd);
+
+                // Ray ref_ray(intersect_point, light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0));
+                // double specular = ref_ray.rd.dot(ray.rd);
+                Point ref_ray_dir = light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0);
+                double specular = ref_ray_dir.dot(ray.rd);
+
                 if(specular>0.0){
-                    color = color + intersectionPointColor * lights[i]->color * pow(specular, shine) * coefficients[SPECULAR];
+                    specular = pow(specular, shine);
+                    color = color + intersectionPointColor * lights[i]->color * coefficients[SPECULAR] * specular;
                 }
+                // else{
+                //     cout<<"specular: "<<specular<<endl;
+                // }
             }
         }
         // light part done
-
+        
         // recursive reflection starts
+        bool recursive_ref = true;
+        if(recursive_ref){
+        
         if(level >= levelsOfRecursion)
         {
             return t_neg;
         }
 
+        Point reflection_dir = ray.rd - normal * (ray.rd.dot(normal) * 2.0);
+        reflection_dir.normalize();
+        Ray reflection_ray(intersect_point+reflection_dir, reflection_dir);
 
+        int nearest_object = -1;
+        double tMin = INF, t;
 
+        for(int i=0; i<objects.size(); i++){
+            Color tempColor;
+            t = objects[i]->intersect(reflection_ray, tempColor, 0);
+            if(t>0.0 && t<tMin){
+                tMin = t;
+                nearest_object = i;
+            }
+        }
 
-        return 0;
+        Color reflected_color;
+        if(nearest_object != -1){
+            tMin = objects[nearest_object]->intersect(reflection_ray, reflected_color, level+1);
+        }
+
+        color = color + reflected_color * coefficients[REFLECTION];
+        color.clip();
+        }
+        return INF;
     }
 
     friend istream& operator>>(istream &in, Sphere &s){
@@ -479,7 +528,7 @@ class Floor : public Object{
     }
 
     double intersect(Ray ray, Color &color, int level){
-        return INF;
+        return -INF;
     }
 
 

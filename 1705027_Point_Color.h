@@ -42,9 +42,9 @@ class Point{
 public:
     double x, y, z;
     Point(){
-        x = 0;
-        y = 0;
-        z = 0;
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
     }
 
     Point(double x, double y, double z){
@@ -56,7 +56,7 @@ public:
     Point(double x, double y){
         this->x = x;
         this->y = y;
-        this->z = 0;
+        this->z = 0.0;
     }
 
     Point operator+(const Point &p){
@@ -77,17 +77,17 @@ public:
 
     Point operator*(const double &d){
         Point p1;
-        p1.x = x * d;
-        p1.y = y * d;
-        p1.z = z * d;
+        p1.x = x * d * 1.0;
+        p1.y = y * d * 1.0;
+        p1.z = z * d * 1.0;
         return p1;
     }
 
     Point operator/(const double &d){
         Point p1;
-        p1.x = x / d;
-        p1.y = y / d;
-        p1.z = z / d;
+        p1.x = x / d * 1.0;
+        p1.y = y / d * 1.0;
+        p1.z = z / d * 1.0;
         return p1;
     }
 
@@ -99,7 +99,7 @@ public:
     }
 
     Point normalize(){
-        double norm = sqrt(x*x + y*y + z*z);
+        double norm = sqrt(x*x + y*y + z*z) * 1.0;
         x /= norm;
         y /= norm;
         z /= norm;
@@ -114,11 +114,11 @@ public:
     }
 
     double distance(Point p){
-        return sqrt((x-p.x)*(x-p.x) + (y-p.y)*(y-p.y) + (z-p.z)*(z-p.z));
+        return sqrt((x-p.x)*(x-p.x) *1.0 + (y-p.y)*(y-p.y)*1.0 + (z-p.z)*(z-p.z)*1.0);
     }
 
     double dot(const Point &p){
-        return x*p.x + y*p.y + z*p.z;
+        return (x*p.x + y*p.y + z*p.z) * 1.0;
     }
 
     Point cross(const Point &p){
@@ -179,9 +179,19 @@ class Color{
             this->b = b;
         }
         Color(){
-            r = (rand()%256)/255.0;
-            g = (rand()%256)/255.0;
-            b = (rand()%256)/255.0;
+            r = 0.0;
+            g = 0.0;
+            b = 0.0;
+        }
+
+        Color clip(){
+            if(r > 1.0) r = 1.0;
+            if(g > 1.0) g = 1.0;
+            if(b > 1.0) b = 1.0;
+            if(r < 0.0) r = 0.0;
+            if(g < 0.0) g = 0.0;
+            if(b < 0.0) b = 0.0;
+            return *this;
         }
 
         Color operator+(const Color &c){
@@ -201,17 +211,17 @@ class Color{
 
         Color operator*(const double &d){
             Color c;
-            c.r = r * d;
-            c.g = g * d;
-            c.b = b * d;
+            c.r = r * d * 1.0;
+            c.g = g * d * 1.0;
+            c.b = b * d * 1.0;
             return c;
         }
 
         Color operator*(const Color &c){
             Color c1;
-            c1.r = r * c.r;
-            c1.g = g * c.g;
-            c1.b = b * c.b;
+            c1.r = r * c.r * 1.0;
+            c1.g = g * c.g * 1.0;
+            c1.b = b * c.b * 1.0;
             return c1;
         }
 
