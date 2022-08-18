@@ -66,6 +66,92 @@ public:
         coefficients[3] = reflection_coefficient;
     }
 
+    void calcLightPart(Ray ray, Color &color, int level, double t_neg, Point normal, Point intersect_point){
+        // intsection point and color
+        Color intersectionPointColor = this->color;
+        // ambient component
+        color = intersectionPointColor * coefficients[AMBIENT];
+        
+
+        // cout<<"normal: "<<normal<<endl;
+
+        // diffuse and specular component
+        for(int i=0; i< lights.size();i++){
+            Point light_dir = intersect_point - lights[i]->position;
+            light_dir.normalize();
+
+            double light_distance = lights[i]->position.distance(intersect_point);
+            Ray light_ray(lights[i]->position, light_dir);
+            
+            bool shadow = false;
+            double eps = 0.000001;
+
+            double t_min = INF,t;
+            for(int j=0; j<objects.size(); j++){
+                Color dummyColor;
+                t = objects[j]->intersect(light_ray, dummyColor, 0);
+                if(t>0.0 && t_min>t){
+                    t_min = t;
+                }
+            }
+
+            if(t_min < light_distance-eps){
+                // cout<<"shadow\n";
+                shadow = true;
+            }
+
+            if(!shadow){
+                // cout<<"no shadow"<<endl;
+                double diffuse = normal.dot(-light_ray.rd) * 1.0;
+
+                if(diffuse>0.0){
+                    color = color + intersectionPointColor * lights[i]->color * coefficients[DIFFUSE] * diffuse;
+                }
+
+                // Ray ref_ray(intersect_point, light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0));
+                // double specular = ref_ray.rd.dot(ray.rd);
+                Point ref_ray_dir = light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0);
+                double specular = ref_ray_dir.dot(ray.rd);
+
+                if(specular>0.0){
+                    specular = pow(specular, shine);
+                    color = color + intersectionPointColor * lights[i]->color * coefficients[SPECULAR] * specular;
+                }
+                // else{
+                //     cout<<"specular: "<<specular<<endl;
+                // }
+            }
+        }
+    }
+
+
+    void recursiveReflection(Ray ray, Color &color, int level, double t_neg, Point normal, Point intersect_point){
+        
+        Point reflection_dir = ray.rd - normal * (ray.rd.dot(normal) * 2.0);
+        reflection_dir.normalize();
+        Ray reflection_ray(intersect_point+reflection_dir, reflection_dir);
+
+        int nearest_object = -1;
+        double tMin = INF, t;
+
+        for(int i=0; i<objects.size(); i++){
+            Color tempColor;
+            t = objects[i]->intersect(reflection_ray, tempColor, 0);
+            if(t>0.0 && t<tMin){
+                tMin = t;
+                nearest_object = i;
+            }
+        }
+
+        Color reflected_color;
+        if(nearest_object != -1){
+            tMin = objects[nearest_object]->intersect(reflection_ray, reflected_color, level+1);
+        }
+
+        color = color + reflected_color * coefficients[REFLECTION];
+        color.clip();
+    }
+
     friend ostream& operator<<(ostream& os, const Object& o){
         os<<"reference_point: "<<o.reference_point<<endl;
         os<<"height width length:"<<endl;
@@ -285,13 +371,8 @@ public:
         // t calculation done
 
         // for light part
-        // intsection point and color
-        Point intersect_point = ray.r0 + ray.rd * t_neg;
-        Color intersectionPointColor = this->color;
-        // ambient component
-        color = intersectionPointColor * coefficients[AMBIENT];
-        
         //calculate normal
+        Point intersect_point = ray.r0 + ray.rd * t_neg;
         Point normal = intersect_point - reference_point;
         normal.normalize();
         double distance = normal.distance(reference_point);
@@ -300,91 +381,17 @@ public:
             normal.normalize(); 
             cout<<" here in -normal\n";           
         }
-
-        // cout<<"normal: "<<normal<<endl;
-
-        // diffuse and specular component
-        for(int i=0; i< lights.size();i++){
-            Point light_dir = intersect_point - lights[i]->position;
-            light_dir.normalize();
-
-            double light_distance = lights[i]->position.distance(intersect_point);
-            Ray light_ray(lights[i]->position, light_dir);
-            
-            bool shadow = false;
-            double eps = 0.000001;
-
-            double t_min = INF,t;
-            for(int j=0; j<objects.size(); j++){
-                Color dummyColor;
-                t = objects[j]->intersect(light_ray, dummyColor, 0);
-                if(t>0.0 && t_min>t){
-                    t_min = t;
-                }
-            }
-
-            if(t_min < light_distance-eps){
-                // cout<<"shadow\n";
-                shadow = true;
-            }
-
-            if(!shadow){
-                // cout<<"no shadow"<<endl;
-                double diffuse = normal.dot(-light_ray.rd) * 1.0;
-
-                if(diffuse>0.0){
-                    color = color + intersectionPointColor * lights[i]->color * coefficients[DIFFUSE] * diffuse;
-                }
-
-                // Ray ref_ray(intersect_point, light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0));
-                // double specular = ref_ray.rd.dot(ray.rd);
-                Point ref_ray_dir = light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0);
-                double specular = ref_ray_dir.dot(ray.rd);
-
-                if(specular>0.0){
-                    specular = pow(specular, shine);
-                    color = color + intersectionPointColor * lights[i]->color * coefficients[SPECULAR] * specular;
-                }
-                // else{
-                //     cout<<"specular: "<<specular<<endl;
-                // }
-            }
-        }
+        calcLightPart(ray, color, level, t_neg, normal, intersect_point);
         // light part done
         
         // recursive reflection starts
-        bool recursive_ref = true;
-        if(recursive_ref){
         
         if(level >= levelsOfRecursion)
         {
             return t_neg;
         }
-
-        Point reflection_dir = ray.rd - normal * (ray.rd.dot(normal) * 2.0);
-        reflection_dir.normalize();
-        Ray reflection_ray(intersect_point+reflection_dir, reflection_dir);
-
-        int nearest_object = -1;
-        double tMin = INF, t;
-
-        for(int i=0; i<objects.size(); i++){
-            Color tempColor;
-            t = objects[i]->intersect(reflection_ray, tempColor, 0);
-            if(t>0.0 && t<tMin){
-                tMin = t;
-                nearest_object = i;
-            }
-        }
-
-        Color reflected_color;
-        if(nearest_object != -1){
-            tMin = objects[nearest_object]->intersect(reflection_ray, reflected_color, level+1);
-        }
-
-        color = color + reflected_color * coefficients[REFLECTION];
-        color.clip();
-        }
+        recursiveReflection(ray, color, level, t_neg, normal, intersect_point);
+        
         return INF;
     }
 
