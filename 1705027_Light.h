@@ -16,6 +16,10 @@ public:
         color = Color();
     }
 
+    virtual Color getColor(){
+        return color;
+    }
+
     virtual void draw(){
         glPushMatrix();
         glTranslatef(position.x, position.y, position.z);
@@ -75,6 +79,11 @@ public:
         glColor3f(color.r, color.g, color.b);
         drawSquare(10);
         glPopMatrix();
+    }
+
+    Color getColor(){
+        
+        return color;
     }
 
     friend ostream& operator<<(ostream &out, const SpotLight &s){

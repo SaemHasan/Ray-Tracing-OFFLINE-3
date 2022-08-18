@@ -67,21 +67,23 @@ public:
     }
 
     void calcLightPart(Ray ray, Color &color, int level, double t_neg, Point normal, Point intersect_point){
-        // intsection point and color
+        // intsection color
         Color intersectionPointColor = this->color;
+
         // ambient component
         color = intersectionPointColor * coefficients[AMBIENT];
         
 
-        // cout<<"normal: "<<normal<<endl;
-
         // diffuse and specular component
         for(int i=0; i< lights.size();i++){
-            Point light_dir = intersect_point - lights[i]->position;
+            Point light_position = lights[i]->position;
+            Color light_color = lights[i]->getColor();
+
+            Point light_dir = intersect_point - light_position;
             light_dir.normalize();
 
-            double light_distance = lights[i]->position.distance(intersect_point);
-            Ray light_ray(lights[i]->position, light_dir);
+            double light_distance = light_position.distance(intersect_point);
+            Ray light_ray(light_position, light_dir);
             
             bool shadow = false;
             double eps = 0.000001;
@@ -105,7 +107,7 @@ public:
                 double diffuse = normal.dot(-light_ray.rd) * 1.0;
 
                 if(diffuse>0.0){
-                    color = color + intersectionPointColor * lights[i]->color * coefficients[DIFFUSE] * diffuse;
+                    color = color + intersectionPointColor * light_color * coefficients[DIFFUSE] * diffuse;
                 }
 
                 // Ray ref_ray(intersect_point, light_ray.rd - normal * ((normal.dot(light_ray.rd)) * 2.0));
@@ -115,7 +117,7 @@ public:
 
                 if(specular>0.0){
                     specular = pow(specular, shine);
-                    color = color + intersectionPointColor * lights[i]->color * coefficients[SPECULAR] * specular;
+                    color = color + intersectionPointColor * light_color * coefficients[SPECULAR] * specular;
                 }
                 // else{
                 //     cout<<"specular: "<<specular<<endl;
