@@ -113,6 +113,10 @@ public:
         return *this;
     }
 
+    double distance(Point p){
+        return sqrt((x-p.x)*(x-p.x) + (y-p.y)*(y-p.y) + (z-p.z)*(z-p.z));
+    }
+
     double dot(const Point &p){
         return x*p.x + y*p.y + z*p.z;
     }
@@ -180,11 +184,35 @@ class Color{
             b = (rand()%256)/255.0;
         }
 
+        Color operator+(const Color &c){
+            Color c1;
+            c1.r = r + c.r;
+            c1.g = g + c.g;
+            c1.b = b + c.b;
+            return c1;
+        }
+
         Color operator=(const Color &c){
             r = c.r;
             g = c.g;
             b = c.b;
             return *this;
+        }
+
+        Color operator*(const double &d){
+            Color c;
+            c.r = r * d;
+            c.g = g * d;
+            c.b = b * d;
+            return c;
+        }
+
+        Color operator*(const Color &c){
+            Color c1;
+            c1.r = r * c.r;
+            c1.g = g * c.g;
+            c1.b = b * c.b;
+            return c1;
         }
 
         friend istream &operator>>(istream  &input, Color &c ) { 

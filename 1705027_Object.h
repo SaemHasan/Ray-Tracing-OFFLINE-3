@@ -14,6 +14,13 @@ Point pos, u, r, l;
 
 bool verbose = false;
 
+class Object;
+class PointLight;
+//vectors
+vector<Object*> objects;
+vector<PointLight*> lights;
+
+
 // Object class starts here =======================================
 
 class Object{
@@ -270,11 +277,59 @@ public:
             return t_neg;
         }
 
-        color.r = this->color.r * coefficients[AMBIENT];
-        color.g = this->color.g * coefficients[AMBIENT];
-        color.b = this->color.b * coefficients[AMBIENT];
+        // for light part
+        // intsection point and color
+        Point intersect_point = ray.r0 + ray.rd * t_neg;
+        Color intersectionPointColor = this->color;
+        // ambient component
+        color = intersectionPointColor * coefficients[AMBIENT];
+        
+        //calculate normal
+        Point normal = intersect_point - reference_point;
+        normal.normalize();
+        double distance = normal.distance(reference_point);
+        if(distance < length){
+            normal = - normal;
+            normal.normalize(); 
+            cout<<" here in -normal\n";           
+        }
 
-        return 0;//delete it later
+        // cout<<"normal: "<<normal<<endl;
+
+        // diffuse and specular component
+        for(int i=0; i< lights.size();i++){
+            Point light_dir = intersect_point - lights[i]->position;
+            light_dir.normalize();
+
+            double light_distance = lights[i]->position.distance(intersect_point);
+            Ray light_ray(lights[i]->position, light_dir);
+            bool shadow = false;
+            
+            for(int j=0; j<objects.size(); j++){
+                double t = objects[j]->intersect(light_ray, color, 0);
+                if(t>0.0 && t<light_distance){
+                    shadow = true;
+                    break;
+                }
+            }
+
+            if(!shadow){
+                // cout<<"no shadow"<<endl;
+                double diffuse = normal.dot(-light_ray.rd);
+
+                if(diffuse>0.0){
+                    color = color + intersectionPointColor * lights[i]->color * coefficients[DIFFUSE] * diffuse;
+                }
+                Point reflection = normal * 2.0 * light_ray.rd.dot(normal) - light_ray.rd;
+                double specular = reflection.dot(ray.rd);
+                if(specular>0.0){
+                    color = color + intersectionPointColor * lights[i]->color * pow(specular, shine) * coefficients[SPECULAR];
+                }
+            }
+
+        }
+
+        return 0;
     }
 
     friend istream& operator>>(istream &in, Sphere &s){

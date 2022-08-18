@@ -1,9 +1,7 @@
 #include "1705027_Object.h"
 #include "bitmap_image.hpp"
 
-//vectors
-vector<Object*> objects;
-vector<PointLight*> lights;
+
 
 //window 
 int windowWidth = 500;
@@ -109,7 +107,7 @@ void capture(){
 			if(nearest != -1){
 				objects[nearest]->intersect(ray, color, 1);
 				// cout << color;
-				image.set_pixel(i,j, (int) round(color.r * 255.0), (int) round(color.g * 255.0), (int) round(color.b * 255.0));
+				image.set_pixel(i,j, round(color.r * 255.0), round(color.g * 255.0), round(color.b * 255.0));
 			}
 		}
 	}
