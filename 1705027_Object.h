@@ -246,7 +246,32 @@ public:
         if(level == 0){
             return t;
         }
-        return INF;//delete later
+
+        // t calculation done
+
+        // light calculation starts
+        Point interestionPoint = ray.r0 + ray.rd*t;
+        Color interestionPointColor = this->color;
+
+        Point normal = (b-a).cross(c-a);
+        normal.normalize();
+
+        if(normal.dot(ray.rd) > 0){
+            normal = -normal;
+        }
+        
+        calcLightPart(ray, color, level, t, normal, interestionPoint, interestionPointColor);
+
+        // recursive reflection starts
+        
+        if(level >= levelsOfRecursion)
+        {
+            return t;
+        }
+        recursiveReflection(ray, color, level, t, normal, interestionPoint);
+        
+
+        return t;
     }
 
     friend ostream& operator<<(ostream &out, const Triangle &t){
@@ -459,7 +484,17 @@ public:
     void draw(){}
 
     double intersect(Ray ray, Color &color, int level){
-        return -1.0;
+        // want to compute ray general quadric surface intersection
+        // general quadric surface equation is Ax^2 + By^2 + Cz^2 + Dxy + Eyz + Fxz + Gx + Hy + Iz + J = 0
+        // ray equation is P = r0 + t*rd
+
+        // for tmin
+        double a, b, c;
+        double t_pos, t_neg;
+        
+        
+
+
     }
 
     friend istream& operator>>(istream &in, General &g){
@@ -550,7 +585,7 @@ class Floor : public Object{
         if(t_min < INF && t_min > 0.0){
             Point intersect_point = ray.r0 + ray.rd*t_min;
             if(intersect_point.x >= reference_point.x && intersect_point.x <= reference_point.x+floorWidth && intersect_point.y >= reference_point.y && intersect_point.y <= reference_point.y+floorWidth){
-                
+                //nothing
             }
             else{
                 t_min = INF;
@@ -568,7 +603,7 @@ class Floor : public Object{
         Point floorPoint = intersect_point - reference_point;
         int m = floor(floorPoint.x/tileWidth);
         int n = floor(floorPoint.y/tileWidth);
-        
+
         if((m+n)%2 == 0){
             intersectionPointColor = tileColors[0];
         }
