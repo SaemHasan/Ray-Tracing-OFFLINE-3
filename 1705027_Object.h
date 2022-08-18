@@ -1,5 +1,10 @@
 #include "1705027_Ray.h"
 
+#define AMBIENT 0
+#define DIFFUSE 1
+#define SPECULAR 2
+#define REFLECTION 3
+
 double cameraHeight;
 double cameraAngle;
 int drawgrid;
@@ -232,9 +237,8 @@ public:
         glPopMatrix();
     }
 
-    double intersect(Ray ray, Color &color, int level){
+    double intersect(Ray ray, Color& color, int level){
         double a, b, c;
-
         double t_pos, t_neg;
 
         Point dir = ray.rd;
@@ -243,20 +247,8 @@ public:
         a = dir.dot(dir);
         b = origin.dot(dir) * 2.0;
         c = origin.dot(origin) - length*length;
-
-
         
         double d_sq = (b*b - 4*a*c); // b^2 - 4ac
-
-        
-        if(verbose){
-            cout<<"dir : "<<dir;
-            cout<<"origin: ";  
-            cout << origin;
-            cout<<"a: "<<a<<" b: "<<b<<" c: "<<c<<endl;
-            cout<<"d_sq: "<<d_sq<<endl;
-            verbose = false;
-        }
 
         if(d_sq<0.0){
             t_neg = INF;
@@ -277,7 +269,12 @@ public:
         {
             return t_neg;
         }
-        return t_neg;//delete it later
+
+        color.r = this->color.r * coefficients[AMBIENT];
+        color.g = this->color.g * coefficients[AMBIENT];
+        color.b = this->color.b * coefficients[AMBIENT];
+
+        return 0;//delete it later
     }
 
     friend istream& operator>>(istream &in, Sphere &s){

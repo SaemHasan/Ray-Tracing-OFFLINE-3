@@ -107,10 +107,9 @@ void capture(){
 				}
 			}
 			if(nearest != -1){
-				// cout<<"nearest : "<<nearest<<endl;
-				Color color = objects[nearest]->color;
-				// cout<<color;
-				image.set_pixel(i,j, (int) color.r * 255.0, (int) color.g * 255.0, (int) color.b * 255.0);
+				objects[nearest]->intersect(ray, color, 1);
+				// cout << color;
+				image.set_pixel(i,j, (int) round(color.r * 255.0), (int) round(color.g * 255.0), (int) round(color.b * 255.0));
 			}
 		}
 	}
