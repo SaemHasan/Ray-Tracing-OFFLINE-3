@@ -1,6 +1,6 @@
 #include "1705027_Object.h"
 #include "bitmap_image.hpp"
-
+#include <sstream>
 
 
 //window 
@@ -103,10 +103,13 @@ void capture(){
 			}
 		}
 	}
+	stringstream stream;
 
-	image.save_image("test_output.bmp");
+    stream <<  numberOfCapturedImages++;
+	string imageName = "Output_" + stream.str() + ".bmp";
+	image.save_image("Output/" + imageName);
 
-	cout<<"saving img\n";
+	cout<<"saving img: "<<imageName<<"\n";
 }
 
 
