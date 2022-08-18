@@ -16,6 +16,14 @@ public:
         color = Color();
     }
 
+    virtual void draw(){
+        glPushMatrix();
+        glTranslatef(position.x, position.y, position.z);
+        glColor3f(color.r, color.g, color.b);
+        glutSolidSphere(2, 50, 50);
+        glPopMatrix();
+    }
+
     friend ostream& operator<<(ostream &out, const PointLight &p){
         out<<"PointLight position:"<<endl;
         out<<p.position<<endl;
@@ -49,6 +57,24 @@ public:
     SpotLight():PointLight(){
         light_direction = Point();
         cutoff_angle = 0;
+    }
+    void drawSquare(double a)
+{
+    //glColor3f(1.0,0.0,0.0);
+	glBegin(GL_QUADS);{
+		glVertex3f( a, a,0);
+		glVertex3f( a,-a,0);
+		glVertex3f(-a,-a,0);
+		glVertex3f(-a, a,0);
+	}glEnd();
+}
+
+    void draw(){
+        glPushMatrix();
+        glTranslatef(position.x, position.y, position.z);
+        glColor3f(color.r, color.g, color.b);
+        drawSquare(10);
+        glPopMatrix();
     }
 
     friend ostream& operator<<(ostream &out, const SpotLight &s){

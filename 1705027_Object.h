@@ -323,11 +323,6 @@ public:
                 }
             }
 
-            // Point shadowPoint = light_ray.r0 + light_ray.rd * t_min;
-            // double shadowPointDistance = shadowPoint.distance(light_ray.r0);
-            // if(shadowPointDistance < light_distance-eps){
-            //     shadow = true;
-            // }
             if(t_min < light_distance-eps){
                 // cout<<"shadow\n";
                 shadow = true;

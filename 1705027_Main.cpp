@@ -52,16 +52,7 @@ void drawGrid()
 	}
 }
 
-void drawSquare(double a)
-{
-    //glColor3f(1.0,0.0,0.0);
-	glBegin(GL_QUADS);{
-		glVertex3f( a, a,0);
-		glVertex3f( a,-a,0);
-		glVertex3f(-a,-a,0);
-		glVertex3f(-a, a,0);
-	}glEnd();
-}
+
 
 void capture(){
 	// initialize bitmap image
@@ -346,6 +337,10 @@ void display(){
 	// draw objects
 	for(int i=0;i<objects.size();i++){
 		objects[i]->draw();
+	}
+
+	for(int i=0;i<lights.size();i++){
+		lights[i]->draw();
 	}
 	
 	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
