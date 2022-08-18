@@ -373,15 +373,19 @@ public:
         // for light part
         //calculate normal
         Point intersect_point = ray.r0 + ray.rd * t_neg;
+
         Point normal = intersect_point - reference_point;
         normal.normalize();
+        
         double distance = normal.distance(reference_point);
         if(distance < length){
             normal = - normal;
             normal.normalize(); 
             cout<<" here in -normal\n";           
         }
+        
         calcLightPart(ray, color, level, t_neg, normal, intersect_point);
+        
         // light part done
         
         // recursive reflection starts
