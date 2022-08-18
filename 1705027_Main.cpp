@@ -3,7 +3,7 @@
 #include <sstream>
 
 
-//window 
+//window variables
 int windowWidth = 500;
 int windowHeight = 500;
 double fovY = 80.0;
@@ -103,10 +103,13 @@ void capture(){
 			}
 		}
 	}
+	// to convert int to string
 	stringstream stream;
-
     stream <<  numberOfCapturedImages++;
+
+	// Output_1.bmp, Output_2.bmp, Output_3.bmp, etc.
 	string imageName = "Output_" + stream.str() + ".bmp";
+	// create a Output folder if not exists
 	image.save_image("Output/" + imageName);
 
 	cout<<"saving img: "<<imageName<<"\n";
@@ -117,7 +120,7 @@ void capture(){
 void keyboardListener(unsigned char key, int x,int y){
 	switch(key){
 		case '0':
-			capture();
+			capture(); // capture image
 			break;
 
 		case '1':
@@ -224,6 +227,7 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 void loadData(){
 	ifstream inputFile("scene_test.txt");
+
 	inputFile >> levelsOfRecursion >> pixelsAlongBothAxis;
 	inputFile >> numberOfObjects;
 
@@ -341,7 +345,8 @@ void display(){
 	for(int i=0;i<objects.size();i++){
 		objects[i]->draw();
 	}
-
+	
+	// draw lights. spot lights are drawn as squares. point lights are drawn as spheres
 	for(int i=0;i<lights.size();i++){
 		lights[i]->draw();
 	}

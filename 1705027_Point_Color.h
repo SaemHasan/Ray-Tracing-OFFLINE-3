@@ -5,6 +5,8 @@
 #include<fstream>
 #include<vector>
 #include <time.h>
+// #include <bits/stdc++.h>
+
 
 #if __WIN32__
 	#include <windows.h>
@@ -16,7 +18,6 @@
 #endif
 
 #define pi (2*acos(0.0))
-// #include <bits/stdc++.h>
 #define INF 999999999
 
 using namespace std;
@@ -45,7 +46,8 @@ class Point{
 
 
 public:
-    double x, y, z;
+    double x, y, z; // coordinates
+    // constructors
     Point(){
         x = 0.0;
         y = 0.0;
@@ -64,6 +66,7 @@ public:
         this->z = 0.0;
     }
 
+    // to add two points
     Point operator+(const Point &p){
         Point p1;
         p1.x = x + p.x;
@@ -72,6 +75,7 @@ public:
         return p1;
     }
 
+    // to subtract two points
     Point operator-(const Point &p){
         Point p1;
         p1.x = x - p.x;
@@ -80,6 +84,7 @@ public:
         return p1;
     }
 
+    // to multiply a point with a scalar
     Point operator*(const double &d){
         Point p1;
         p1.x = x * d * 1.0;
@@ -88,6 +93,7 @@ public:
         return p1;
     }
 
+    // to divide a point with a scalar
     Point operator/(const double &d){
         Point p1;
         p1.x = x / d * 1.0;
@@ -96,6 +102,7 @@ public:
         return p1;
     }
 
+    // copy constructor
     Point operator=(const Point &p){
         x = p.x;
         y = p.y;
@@ -103,6 +110,7 @@ public:
         return *this;
     }
 
+    // normalize a point
     Point normalize(){
         double norm = sqrt(x*x + y*y + z*z) * 1.0;
         x /= norm;
@@ -111,6 +119,7 @@ public:
         return *this;
     }
 
+    // negate a point
     Point operator-(){
         x = -x;
         y = -y;
@@ -118,14 +127,17 @@ public:
         return *this;
     }
 
+    // distance between two points
     double distance(Point p){
         return sqrt((x-p.x)*(x-p.x) *1.0 + (y-p.y)*(y-p.y)*1.0 + (z-p.z)*(z-p.z)*1.0);
     }
 
+    // dot product of two points
     double dot(const Point &p){
         return (x*p.x + y*p.y + z*p.z) * 1.0;
     }
 
+    // cross product of two points
     Point cross(const Point &p){
         Point p1;
         p1.x = y*p.z - z*p.y;
@@ -138,12 +150,13 @@ public:
         return sqrt(x*x + y*y + z*z);
     }
 
-    
+    // to print a point
     friend ostream &operator<<( ostream &output, const Point &p ) { 
         output<< p.x << " " << p.y << " " << p.z << endl;
          return output;            
       }
 
+    // to read a point from file or console
     friend istream &operator>>( istream  &input, Point &p ) { 
         input >> p.x >> p.y >> p.z;
         return input;            
@@ -176,8 +189,9 @@ public:
 
 class Color{
     public:
-        double r, g, b;
+        double r, g, b; // has to be between 0 and 1 for openGL
 
+        // constructors
         Color(int r, int g, int b){
             this->r = r;
             this->g = g;
@@ -189,6 +203,7 @@ class Color{
             b = 0.0;
         }
 
+        // to clip between 0 and 1
         Color clip(){
             if(r > 1.0) r = 1.0;
             if(g > 1.0) g = 1.0;
@@ -198,7 +213,8 @@ class Color{
             if(b < 0.0) b = 0.0;
             return *this;
         }
-
+        
+        // to add two colors
         Color operator+(const Color &c){
             Color c1;
             c1.r = r + c.r;
@@ -207,6 +223,7 @@ class Color{
             return c1;
         }
 
+        // copy constructor
         Color operator=(const Color &c){
             r = c.r;
             g = c.g;
@@ -214,6 +231,7 @@ class Color{
             return *this;
         }
 
+        // to multiply a color with a scalar
         Color operator*(const double &d){
             Color c;
             c.r = r * d * 1.0;
@@ -222,6 +240,7 @@ class Color{
             return c;
         }
 
+        // to multiply two colors
         Color operator*(const Color &c){
             Color c1;
             c1.r = r * c.r * 1.0;
@@ -229,12 +248,14 @@ class Color{
             c1.b = b * c.b * 1.0;
             return c1;
         }
-
+        
+        // to take input from the file. 
         friend istream &operator>>(istream  &input, Color &c ) { 
             input >> c.r >> c.g >> c.b;
             return input;            
         }
 
+        // to output the color's details
         friend ostream& operator<<(ostream& os, const Color& c){
             os<<c.r<<" "<<c.g<<" "<<c.b<<endl;
             return os;

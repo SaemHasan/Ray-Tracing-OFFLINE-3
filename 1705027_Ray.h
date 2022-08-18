@@ -5,13 +5,14 @@ class Ray{
         Point r0;//start
         Point rd;//direction
 
+        // constructors
         Ray(){
             r0 = Point();
             rd = Point();
         }
         Ray(Point start, Point direction){
-            this->r0 = start;
-            this->rd = direction.normalize();
+            this->r0 = start; // start point
+            this->rd = direction.normalize(); // normalize the direction
         }
 
 };
