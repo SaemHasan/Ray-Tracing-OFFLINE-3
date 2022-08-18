@@ -338,9 +338,9 @@ void Object::computeReflectionComponents(Ray ray, Color& color, Vector intersect
     color.green += light.getColor().green*intersectionPointColor.green*getReflectionCoefficient().diffuseReflectionCoefficient*max(lambertValue, 0.0);
     color.blue += light.getColor().blue*intersectionPointColor.blue*getReflectionCoefficient().diffuseReflectionCoefficient*max(lambertValue, 0.0);
 
-    // color.red += light.getColor().red*intersectionPointColor.red*getReflectionCoefficient().specularReflectionCoefficient*pow(max(phongValue, 0.0), getShininess());
-    // color.green += light.getColor().green*intersectionPointColor.green*getReflectionCoefficient().specularReflectionCoefficient*pow(max(phongValue, 0.0), getShininess());
-    // color.blue += light.getColor().blue*intersectionPointColor.blue*getReflectionCoefficient().specularReflectionCoefficient*pow(max(phongValue, 0.0), getShininess());
+    color.red += light.getColor().red*intersectionPointColor.red*getReflectionCoefficient().specularReflectionCoefficient*pow(max(phongValue, 0.0), getShininess());
+    color.green += light.getColor().green*intersectionPointColor.green*getReflectionCoefficient().specularReflectionCoefficient*pow(max(phongValue, 0.0), getShininess());
+    color.blue += light.getColor().blue*intersectionPointColor.blue*getReflectionCoefficient().specularReflectionCoefficient*pow(max(phongValue, 0.0), getShininess());
 }
 
 void Object::computeRecursiveReflectionComponent(Color& color, Color reflectedColor) {
@@ -660,39 +660,39 @@ double Triangle::intersect(Ray ray, Color& color, int level) {
         computeReflectionComponents(ray, color, intersectionPoint, intersectionPointColor, normal, lights[i], incidentRay);
     }
 
-    // /* handling recursive reflection */
-    // if(level >= recursionLevel) {
-    //     return tMin;
-    // }
+    /* handling recursive reflection */
+    if(level >= recursionLevel) {
+        return tMin;
+    }
 
-    // /* incorporating concept of evil epsilon to recursive reflection computation */
-    // Vector reflectionDirection = ray.getRD()-normal*((ray.getRD()/normal)*2.0);
-    // reflectionDirection.normalize();
-    // Ray reflectedRay(intersectionPoint+reflectionDirection, reflectionDirection);
+    /* incorporating concept of evil epsilon to recursive reflection computation */
+    Vector reflectionDirection = ray.getRD()-normal*((ray.getRD()/normal)*2.0);
+    reflectionDirection.normalize();
+    Ray reflectedRay(intersectionPoint+reflectionDirection, reflectionDirection);
 
-    // /* finding nearest intersecting object (if available) */
-    // int nearest = INT_MAX;
-    // double t, tMinimum=INF;
+    /* finding nearest intersecting object (if available) */
+    int nearest = INT_MAX;
+    double t, tMinimum=INF;
 
-    // for(int i=0; i<objects.size(); i++) {
-    //     Color dummyColor;  // color = black
-    //     t = objects[i]->intersect(reflectedRay, dummyColor, 0);
+    for(int i=0; i<objects.size(); i++) {
+        Color dummyColor;  // color = black
+        t = objects[i]->intersect(reflectedRay, dummyColor, 0);
 
-    //     if(t>0.0 && t<tMinimum) {
-    //         tMinimum = t;
-    //         nearest = i;
-    //     }
-    // }
+        if(t>0.0 && t<tMinimum) {
+            tMinimum = t;
+            nearest = i;
+        }
+    }
 
-    // /* finding color component for reflected ray */
-    // Color reflectedColor;  // color = black
+    /* finding color component for reflected ray */
+    Color reflectedColor;  // color = black
 
-    // if(nearest != INT_MAX) {
-    //     tMinimum = objects[nearest]->intersect(reflectedRay, reflectedColor, level+1);
-    // }
+    if(nearest != INT_MAX) {
+        tMinimum = objects[nearest]->intersect(reflectedRay, reflectedColor, level+1);
+    }
 
-    // /* computing recursive reflection component of reflected ray */
-    // computeRecursiveReflectionComponent(color, reflectedColor);
+    /* computing recursive reflection component of reflected ray */
+    computeRecursiveReflectionComponent(color, reflectedColor);
 
     /* clipping the color values (if necessary) */
     color.red = (color.red > 1.0)? 1.0: ((color.red < 0.0)? 0.0: color.red);
