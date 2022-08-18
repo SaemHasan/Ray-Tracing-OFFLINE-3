@@ -16,7 +16,7 @@ public:
         color = Color();
     }
 
-    virtual Color getColor(){
+    virtual Color getColor(Point intersectionPoint){
         return color;
     }
 
@@ -81,7 +81,15 @@ public:
         glPopMatrix();
     }
 
-    Color getColor(){
+    Color getColor(Point intersectionPoint){
+        light_direction.normalize();
+        Point light_to_intersectPoint = intersectionPoint - position;
+        light_to_intersectPoint.normalize();
+        double angle = acos(light_direction.dot(light_to_intersectPoint));
+        angle = rad2deg(angle);
+
+        if(angle > cutoff_angle) 
+            return Color(0, 0, 0);
         
         return color;
     }

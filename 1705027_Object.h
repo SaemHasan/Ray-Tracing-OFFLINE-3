@@ -77,7 +77,7 @@ public:
         // diffuse and specular component
         for(int i=0; i< lights.size();i++){
             Point light_position = lights[i]->position;
-            Color light_color = lights[i]->getColor();
+            Color light_color = lights[i]->getColor(intersect_point);
 
             Point light_dir = intersect_point - light_position;
             light_dir.normalize();
