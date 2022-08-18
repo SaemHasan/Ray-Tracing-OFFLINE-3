@@ -245,6 +245,7 @@ public:
     }
 
     double intersect(Ray ray, Color& color, int level){
+        // for tmin
         double a, b, c;
         double t_pos, t_neg;
 
@@ -276,6 +277,8 @@ public:
         {
             return t_neg;
         }
+
+        // t calculation done
 
         // for light part
         // intsection point and color
@@ -326,8 +329,17 @@ public:
                     color = color + intersectionPointColor * lights[i]->color * pow(specular, shine) * coefficients[SPECULAR];
                 }
             }
-
         }
+        // light part done
+
+        // recursive reflection starts
+        if(level >= levelsOfRecursion)
+        {
+            return t_neg;
+        }
+
+
+
 
         return 0;
     }
