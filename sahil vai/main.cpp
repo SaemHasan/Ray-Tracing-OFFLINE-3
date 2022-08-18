@@ -477,8 +477,8 @@ void loadData() {
     object = new Floor(1000.0, 20.0, Color());  // color = black
 
     object->setColor(Color(1.0, 1.0, 1.0));  // color = white
-    object->setReflectionCoefficient(ReflectionCoefficient(0.25, 0.25, 0.25, 0.25));
-    object->setShininess(15);
+    object->setReflectionCoefficient(ReflectionCoefficient(0.4, 0.2, 0.2, 0.2));
+    object->setShininess(10);
 
     objects.push_back(object);
     object = NULL;

@@ -66,9 +66,7 @@ public:
         coefficients[3] = reflection_coefficient;
     }
 
-    void calcLightPart(Ray ray, Color &color, int level, double t_neg, Point normal, Point intersect_point){
-        // intsection color
-        Color intersectionPointColor = this->color;
+    void calcLightPart(Ray ray, Color &color, int level, double t_neg, Point normal, Point intersect_point,Color intersectionPointColor){
 
         // ambient component
         color = intersectionPointColor * coefficients[AMBIENT];
@@ -385,8 +383,9 @@ public:
             normal.normalize(); 
             cout<<" here in -normal\n";           
         }
-        
-        calcLightPart(ray, color, level, t_neg, normal, intersect_point);
+        Color intersectionPointColor = this->color;
+
+        calcLightPart(ray, color, level, t_neg, normal, intersect_point, intersectionPointColor);
         
         // light part done
         
@@ -398,7 +397,7 @@ public:
         }
         recursiveReflection(ray, color, level, t_neg, normal, intersect_point);
         
-        return INF;
+        return t_neg;
     }
 
     friend istream& operator>>(istream &in, Sphere &s){
@@ -536,7 +535,57 @@ class Floor : public Object{
     }
 
     double intersect(Ray ray, Color &color, int level){
-        return -INF;
+        Point normal = Point(0,0,1.0);
+
+        if (pos.dot(normal) < 0.0){
+            normal = -normal;
+        }
+
+        double t_min = INF;
+
+        if(ray.rd.dot(normal)!=0.0){
+            t_min = - (normal.dot(ray.r0)/ray.rd.dot(normal));
+        }
+
+        if(t_min < INF && t_min > 0.0){
+            Point intersect_point = ray.r0 + ray.rd*t_min;
+            if(intersect_point.x >= reference_point.x && intersect_point.x <= reference_point.x+floorWidth && intersect_point.y >= reference_point.y && intersect_point.y <= reference_point.y+floorWidth){
+                
+            }
+            else{
+                t_min = INF;
+            }
+        }
+
+        if(level == 0){
+            return t_min;
+        }
+        // t calc done
+
+        //light caculation
+        Point intersect_point = ray.r0 + ray.rd*t_min;
+        Color intersectionPointColor;
+        Point floorPoint = intersect_point - reference_point;
+        int m = floor(floorPoint.x/tileWidth);
+        int n = floor(floorPoint.y/tileWidth);
+        
+        if((m+n)%2 == 0){
+            intersectionPointColor = tileColors[0];
+        }
+        else{
+            intersectionPointColor = tileColors[1];
+        }
+        calcLightPart(ray, color, level, t_min, normal, intersect_point, intersectionPointColor);
+
+        // recursive reflection starts
+        
+        if(level >= levelsOfRecursion)
+        {
+            return t_min;
+        }
+        recursiveReflection(ray, color, level, t_min, normal, intersect_point);
+
+        return t_min;
     }
 
 

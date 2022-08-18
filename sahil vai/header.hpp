@@ -968,108 +968,107 @@ void Floor::draw() {
 
 double Floor::intersect(Ray ray, Color& color, int level) {
     /* determining unit normal vector on appropriate side of floor */
-    // Vector normal(0.0, 0.0, 1.0);
-    // normal = (position/normal > 0.0)? normal: normal*(-1.0);
+    Vector normal(0.0, 0.0, 1.0);
+    normal = (position/normal > 0.0)? normal: normal*(-1.0);
 
-    // /* finding intersecting tMin */
-    // double tMin = INF;
+    /* finding intersecting tMin */
+    double tMin = INF;
 
-    // if(normal/ray.getRD() != 0.0) {
-    //     tMin = (-1.0)*(normal/ray.getRO())/(normal/ray.getRD());
-    // }
+    if(normal/ray.getRD() != 0.0) {
+        tMin = (-1.0)*(normal/ray.getRO())/(normal/ray.getRD());
+    }
 
-    // if(tMin>0.0 && tMin<INF) {
-    //     /*
-    //         ray intersects the floor plane and is in front of the camera,
-    //             but we need to make sure the intersection point is on the floor
-    //     */
-    //     Vector intersectionPoint = ray.getRO()+ray.getRD()*tMin;
+    if(tMin>0.0 && tMin<INF) {
+        /*
+            ray intersects the floor plane and is in front of the camera,
+                but we need to make sure the intersection point is on the floor
+        */
+        Vector intersectionPoint = ray.getRO()+ray.getRD()*tMin;
 
-    //     if(!((intersectionPoint.getX()>-floorWidth/2.0 && intersectionPoint.getX()<floorWidth/2.0) && (intersectionPoint.getY()>-floorWidth/2.0 && intersectionPoint.getY()<floorWidth/2.0))) {
-    //         /* intersection point is not on the floor */
-    //         tMin = INF;
-    //     }
-    // }
+        if(!((intersectionPoint.getX()>-floorWidth/2.0 && intersectionPoint.getX()<floorWidth/2.0) && (intersectionPoint.getY()>-floorWidth/2.0 && intersectionPoint.getY()<floorWidth/2.0))) {
+            /* intersection point is not on the floor */
+            tMin = INF;
+        }
+    }
 
-    // if(level == 0) {
-    //     return tMin;
-    // }
+    if(level == 0) {
+        return tMin;
+    }
 
-    // /* illuminating with Phong Lighting Model */
-    // Vector intersectionPoint = ray.getRO()+ray.getRD()*tMin;
-    // Vector referencePosition = intersectionPoint-Vector(-floorWidth/2.0, -floorWidth/2.0, 0.0);
-    // Color intersectionPointColor = (((int) (floor(referencePosition.getX()/tileWidth)+floor(referencePosition.getY()/tileWidth)))%2 == 0)? getColor(): foregroundColor;
+    /* illuminating with Phong Lighting Model */
+    Vector intersectionPoint = ray.getRO()+ray.getRD()*tMin;
+    Vector referencePosition = intersectionPoint-Vector(-floorWidth/2.0, -floorWidth/2.0, 0.0);
+    Color intersectionPointColor = (((int) (floor(referencePosition.getX()/tileWidth)+floor(referencePosition.getY()/tileWidth)))%2 == 0)? getColor(): foregroundColor;
 
-    // /* computing ambient light component of reflected ray */
-    // computeAmbientLightComponent(color, intersectionPointColor);
+    /* computing ambient light component of reflected ray */
+    computeAmbientLightComponent(color, intersectionPointColor);
 
-    // /* computing diffuse & specular reflection components of reflected ray */
-    // for(int i=0; i<lights.size(); i++) {
-    //     Ray incidentRay(lights[i].getPosition(), intersectionPoint-lights[i].getPosition());
+    /* computing diffuse & specular reflection components of reflected ray */
+    for(int i=0; i<lights.size(); i++) {
+        Ray incidentRay(lights[i].getPosition(), intersectionPoint-lights[i].getPosition());
 
-    //     /* checking if intersection point is in shadow */
-    //     double t, tMinimum=INF;
+        /* checking if intersection point is in shadow */
+        double t, tMinimum=INF;
 
-    //     for(int j=0; j<objects.size(); j++) {
-    //         Color dummyColor;  // color = black
-    //         t = objects[j]->intersect(incidentRay, dummyColor, 0);
+        for(int j=0; j<objects.size(); j++) {
+            Color dummyColor;  // color = black
+            t = objects[j]->intersect(incidentRay, dummyColor, 0);
 
-    //         if(t>0.0 && t<tMinimum) {
-    //             tMinimum = t;
-    //         }
-    //     }
+            if(t>0.0 && t<tMinimum) {
+                tMinimum = t;
+            }
+        }
 
-    //     Vector shadowIntersectionPoint = incidentRay.getRO()+incidentRay.getRD()*tMinimum;
-    //     double epsilon = 0.0000001;  // for tuning light effect
+        Vector shadowIntersectionPoint = incidentRay.getRO()+incidentRay.getRD()*tMinimum;
+        double epsilon = 0.0000001;  // for tuning light effect
 
-    //     if(intersectionPoint.computeDistanceBetween(incidentRay.getRO())-epsilon > shadowIntersectionPoint.computeDistanceBetween(incidentRay.getRO())) {
-    //         /* intersection point is, indeed, in shadow */
-    //         continue;
-    //     }
+        if(intersectionPoint.computeDistanceBetween(incidentRay.getRO())-epsilon > shadowIntersectionPoint.computeDistanceBetween(incidentRay.getRO())) {
+            /* intersection point is, indeed, in shadow */
+            continue;
+        }
 
-    //     /* computing diffuse & specular components of reflected ray */
-    //     computeReflectionComponents(ray, color, intersectionPoint, intersectionPointColor, normal, lights[i], incidentRay);
-    // }
+        /* computing diffuse & specular components of reflected ray */
+        computeReflectionComponents(ray, color, intersectionPoint, intersectionPointColor, normal, lights[i], incidentRay);
+    }
 
-    // /* handling recursive reflection */
-    // if(level >= recursionLevel) {
-    //     return tMin;
-    // }
+    /* handling recursive reflection */
+    if(level >= recursionLevel) {
+        return tMin;
+    }
 
-    // /* incorporating concept of evil epsilon to recursive reflection computation */
-    // Vector reflectionDirection = ray.getRD()-normal*((ray.getRD()/normal)*2.0);
-    // reflectionDirection.normalize();
-    // Ray reflectedRay(intersectionPoint+reflectionDirection, reflectionDirection);
+    /* incorporating concept of evil epsilon to recursive reflection computation */
+    Vector reflectionDirection = ray.getRD()-normal*((ray.getRD()/normal)*2.0);
+    reflectionDirection.normalize();
+    Ray reflectedRay(intersectionPoint+reflectionDirection, reflectionDirection);
 
-    // /* finding nearest intersecting object (if available) */
-    // int nearest = INT_MAX;
-    // double t, tMinimum=INF;
+    /* finding nearest intersecting object (if available) */
+    int nearest = INT_MAX;
+    double t, tMinimum=INF;
 
-    // for(int i=0; i<objects.size(); i++) {
-    //     Color dummyColor;  // color = black
-    //     t = objects[i]->intersect(reflectedRay, dummyColor, 0);
+    for(int i=0; i<objects.size(); i++) {
+        Color dummyColor;  // color = black
+        t = objects[i]->intersect(reflectedRay, dummyColor, 0);
 
-    //     if(t>0.0 && t<tMinimum) {
-    //         tMinimum = t;
-    //         nearest = i;
-    //     }
-    // }
+        if(t>0.0 && t<tMinimum) {
+            tMinimum = t;
+            nearest = i;
+        }
+    }
 
-    // /* finding color component for reflected ray */
-    // Color reflectedColor;  // color = black
+    /* finding color component for reflected ray */
+    Color reflectedColor;  // color = black
 
-    // if(nearest != INT_MAX) {
-    //     tMinimum = objects[nearest]->intersect(reflectedRay, reflectedColor, level+1);
-    // }
+    if(nearest != INT_MAX) {
+        tMinimum = objects[nearest]->intersect(reflectedRay, reflectedColor, level+1);
+    }
 
-    // /* computing recursive reflection component of reflected ray */
-    // computeRecursiveReflectionComponent(color, reflectedColor);
+    /* computing recursive reflection component of reflected ray */
+    computeRecursiveReflectionComponent(color, reflectedColor);
 
-    // /* clipping the color values (if necessary) */
-    // color.red = (color.red > 1.0)? 1.0: ((color.red < 0.0)? 0.0: color.red);
-    // color.green = (color.green > 1.0)? 1.0: ((color.green < 0.0)? 0.0: color.green);
-    // color.blue = (color.blue > 1.0)? 1.0: ((color.blue < 0.0)? 0.0: color.blue);
+    /* clipping the color values (if necessary) */
+    color.red = (color.red > 1.0)? 1.0: ((color.red < 0.0)? 0.0: color.red);
+    color.green = (color.green > 1.0)? 1.0: ((color.green < 0.0)? 0.0: color.green);
+    color.blue = (color.blue > 1.0)? 1.0: ((color.blue < 0.0)? 0.0: color.blue);
 
-    // return tMin;
-    return INF;
+    return tMin;
 }
