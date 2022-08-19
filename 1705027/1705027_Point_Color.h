@@ -37,7 +37,7 @@ int pixelsAlongBothAxis = 0;
 int numberOfObjects = 0;
 int numberOfPointLights = 0;
 int numberOfSpotLights = 0;
-int numberOfCapturedImages = 1;
+int numberOfCapturedImages = 11;
 
 //================================================
 // Point Class
