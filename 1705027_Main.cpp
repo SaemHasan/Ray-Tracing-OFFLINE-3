@@ -3,7 +3,7 @@
 #include <sstream>
 
 // input file name
-string inputFileName = "scene_test.txt";
+string inputFileName = "scene.txt";
 // create a folder to store the output images
 // name of the folder ==> Output
 
@@ -284,7 +284,7 @@ void loadData(){
 	// initialize floor
 	Object *floor = new Floor(1000, 20);
 	floor->setColor(Color(1,1,1)); // set dummy color
-	floor->setShine(15);
+	floor->setShine(10);
 	floor->setCoEfficients(0.4, 0.2, 0.2, 0.2);
 	objects.push_back(floor);
 }
