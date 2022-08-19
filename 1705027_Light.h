@@ -105,7 +105,8 @@ public:
         if(angle > cutoff_angle) 
             return Color(0, 0, 0);
         
-        return color;
+        Color spotLightColor = color * pow(cos(deg2rad(angle)), 20);//Intensity of spot light received at  P = I cos^ε(β)
+        return spotLightColor;
     }
 
     // to print the details of the light

@@ -284,7 +284,7 @@ void loadData(){
 	// initialize floor
 	Object *floor = new Floor(1000, 20);
 	floor->setColor(Color(1,1,1)); // set dummy color
-	floor->setShine(10);
+	floor->setShine(15);
 	floor->setCoEfficients(0.4, 0.2, 0.2, 0.2);
 	objects.push_back(floor);
 }
