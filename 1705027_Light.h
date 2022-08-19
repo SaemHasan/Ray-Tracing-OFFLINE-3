@@ -47,6 +47,10 @@ public:
         return in;
     }
 
+    // destructor
+    ~PointLight(){
+
+    }
 };
 
 // Point light class ends here =========================================
@@ -124,6 +128,11 @@ public:
         in>>s.light_direction;
         in>>s.cutoff_angle;
         return in;
+    }
+
+    // destructor
+    ~SpotLight(){
+
     }
 };
 

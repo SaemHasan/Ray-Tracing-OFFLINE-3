@@ -180,6 +180,13 @@ public:
     void print(){
         cout<<"( x: "<<x<<", y: "<<y<<", z: "<<z<<")"<<endl;
     }
+
+    // destructor
+    ~Point(){
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+    }
 };
 
 // point class ends here =========================================
@@ -259,6 +266,13 @@ class Color{
         friend ostream& operator<<(ostream& os, const Color& c){
             os<<c.r<<" "<<c.g<<" "<<c.b<<endl;
             return os;
+        }
+
+        // destructor
+        ~Color(){
+            r = 0.0;
+            g = 0.0;
+            b = 0.0;
         }
 };
 

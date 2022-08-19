@@ -15,6 +15,10 @@ class Ray{
             this->rd = direction.normalize(); // normalize the direction
         }
 
+        // destructor
+        ~Ray(){
+        }
+
 };
 
 // Ray Class ends here =========================================

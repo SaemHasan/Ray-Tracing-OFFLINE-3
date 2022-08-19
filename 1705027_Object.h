@@ -187,6 +187,15 @@ public:
         os<<o.coefficients[0]<<" "<<o.coefficients[1]<<" "<<o.coefficients[2]<<" "<<o.coefficients[3]<<" "<<o.shine<<endl;
         return os;
     }
+
+    // destructor
+    ~Object(){
+        length = 0;
+        width = 0;
+        height = 0;
+        shine = 0;
+        coefficients[0] = coefficients[1] = coefficients[2] = coefficients[3] = 0;
+    }
 };
 
 // Object class ends here =========================================
@@ -331,6 +340,11 @@ public:
         in>>t.color;
         in>>t.coefficients[0]>>t.coefficients[1]>>t.coefficients[2]>>t.coefficients[3]>>t.shine;
         return in;
+    }
+
+    // destructor
+    ~Triangle(){
+
     } 
 };
 
@@ -494,6 +508,11 @@ public:
         return out;
     }
 
+    // destructor
+    ~Sphere(){
+        // cout<<"Sphere destroyed"<<endl;
+    }
+
 };
 
 // Sphere class end here =========================================
@@ -519,16 +538,7 @@ public:
     }
 
     General():Object(){
-        A = 0;
-        B = 0;
-        C = 0;
-        D = 0;
-        E = 0;
-        F = 0;
-        G = 0;
-        H = 0;
-        I = 0;
-        J = 0;
+        A = B = C = D = E = F = G = H = I = J = 0.0;
     }
 
     // no need to draw the general equation
@@ -621,6 +631,7 @@ public:
 
         // calculate normal
         // to get the normal, we need to differentiate the general equation
+        // need to calculate the partial derivatives. dx, dy, dz
         Point normal = Point(2.0*A*x + D*y + F*z + G, 2.0*B*y + D*x + E*z + H, 2.0*C*z + E*y + F*x + I);
         normal.normalize(); // normalize the normal
 
@@ -668,6 +679,10 @@ public:
         out<<"Shine:"<<endl;
         out<<g.shine<<endl;
         return out;
+    }
+    // destructor
+    ~General(){
+        A = B = C = D = E = F = G = H = I = J = 0.0;
     }
 };
 
@@ -803,6 +818,10 @@ class Floor : public Object{
         out<<"Shine:"<<endl;
         out<<f.shine<<endl;
         return out;
+    }
+    // destructor
+    ~Floor(){
+        floorWidth = tileWidth = 0.0;
     }
 };
 

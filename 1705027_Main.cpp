@@ -2,6 +2,10 @@
 #include "bitmap_image.hpp"
 #include <sstream>
 
+// input file name
+string inputFileName = "scene_test.txt";
+// create a folder to store the output images
+// name of the folder ==> Output
 
 //window variables
 int windowWidth = 500;
@@ -56,7 +60,7 @@ void drawGrid()
 
 void capture(){
 	// initialize bitmap image
-	cout <<"capturing\n";
+	cout <<"capturing image\n";
 	bitmap_image image(pixelsAlongBothAxis,pixelsAlongBothAxis);
 	
 	for(int i=0;i<pixelsAlongBothAxis;i++){
@@ -226,7 +230,7 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 
 void loadData(){
-	ifstream inputFile("scene_test.txt");
+	ifstream inputFile(inputFileName);
 
 	inputFile >> levelsOfRecursion >> pixelsAlongBothAxis;
 	inputFile >> numberOfObjects;
@@ -275,9 +279,11 @@ void loadData(){
 		lights.push_back(sl);
 	}
 
+	inputFile.close();
+
 	// initialize floor
 	Object *floor = new Floor(1000, 20);
-	floor->setColor(Color(1,1,1));
+	floor->setColor(Color(1,1,1)); // set dummy color
 	floor->setShine(10);
 	floor->setCoEfficients(0.4, 0.2, 0.2, 0.2);
 	objects.push_back(floor);
@@ -341,7 +347,7 @@ void display(){
 	drawAxes();
 	drawGrid();
 
-	// draw objects
+	// draw objects. draw sphere & triangle in opengl
 	for(int i=0;i<objects.size();i++){
 		objects[i]->draw();
 	}
@@ -421,5 +427,9 @@ int main(int argc, char **argv){
 
 	glutMainLoop();		//The main loop of OpenGL
 
+	// free vector memory
+	vector<Object*>().swap(objects);
+	vector<PointLight*>().swap(lights);
+	
 	return 0;
 }
