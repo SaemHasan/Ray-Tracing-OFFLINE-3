@@ -113,7 +113,7 @@ public:
         Point normal = intersect_point - reference_point; // normal
         normal.normalize(); // normalize the normal
         
-        double distance = normal.distance(reference_point); // distance from the center of the sphere
+        double distance = pos.distance(reference_point); // distance from the center of the sphere
         // if distance is less than radius, then the point is inside the sphere
         if(distance < length){
             normal = - normal;

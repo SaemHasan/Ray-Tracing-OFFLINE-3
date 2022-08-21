@@ -113,7 +113,7 @@ public:
             }
 
             // if the nearest intersection point is not the initial intersection point, then there is a shadow. 
-            if(t_min < light_distance-eps || light_ray.rd.dot(-normal)<=0.0){
+            if(t_min < light_distance-eps){
                 // cout<<"shadow\n";
                 shadow = true;
                 // if there is a shadow, then the diffuse and specular component will be zero. So, we will not calculate them.
