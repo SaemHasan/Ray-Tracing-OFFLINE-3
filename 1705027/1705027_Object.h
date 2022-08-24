@@ -136,7 +136,8 @@ public:
                 // only need to calculate the specular component if it is positive
                 if(specular>0.0){
                     specular = pow(specular, shine);
-                    color = color + intersectionPointColor * light_color * coefficients[SPECULAR] * specular;
+                    // the equation is not correct in the spec. It should be color = color + light_color * coefficients[SPECULAR] * specular;
+                    color = color + light_color * coefficients[SPECULAR] * specular;
                 }
             }
         }

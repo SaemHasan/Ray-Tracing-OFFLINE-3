@@ -107,6 +107,7 @@ public:
         
         Color spotLightColor = color * pow(cos(deg2rad(angle)), 20);//Intensity of spot light received at  P = I cos^ε(β)
         return spotLightColor;
+        // return color;
     }
 
     // to print the details of the light
